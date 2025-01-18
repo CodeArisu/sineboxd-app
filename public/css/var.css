@@ -1,0 +1,9 @@
+/* 
+    includes all default styles here 
+*/
+:root {
+
+    /* example variable nugget */
+    --def-fs: 1.25em;
+    --def-padding: 5px 20px;
+}

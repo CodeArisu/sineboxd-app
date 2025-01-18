@@ -1,8 +1,35 @@
-/* default css configurations */
+/* default css element configurations */
 * {
     box-sizing: content-box;
 }
-body {
+html {
+    font-size: 100%;
+}
+html, body {
     padding: 0;
     margin: 0;
+}
+ul {
+    list-style-type: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+ul > li {
+    font-size: var(--def-fs);
+}
+a {
+    text-decoration: none;
+    color: rgba(0 0 0 / .8);
+    padding: var(--def-padding);
+    font-size: var(--def-fs);
+    text-align: center;
+    line-height: 0;
+    border: 1px solid rgba(0 0 0 / .8);
+}
+button {
+    border: none;
+    padding: var(--def-padding);
+    font-size: var(--def-fs);
+    cursor: pointer;
 }
