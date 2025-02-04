@@ -6,8 +6,12 @@ html {
     font-size: 100%;
 }
 html, body {
-    padding: 0;
-    margin: 0;
+    padding: 5px;
+    margin: 5px;
+    display: block;
+
+    font-family: var(--def-font);
+    font-weight: 300;
 }
 ul {
     list-style-type: none;
@@ -28,6 +32,8 @@ a {
     border: 1px solid rgba(0 0 0 / .8);
 }
 button {
+    background: rgba(0 0 0 / .8);
+    color: white;
     border: none;
     padding: var(--def-padding);
     font-size: var(--def-fs);

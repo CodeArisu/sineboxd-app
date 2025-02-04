@@ -1,7 +1,9 @@
 /* 
-    includes all default styles here 
+*  includes all default styles for each components
 */
 :root {
+
+    --def-font: "Lexend Giga", serif;
 
     /* example variable nugget */
     --def-fs: 1.25em;
