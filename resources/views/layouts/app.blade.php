@@ -26,7 +26,7 @@
 
     <body>
             {{-- 
-                Where html contents are being applied
+            -- Where html contents are being applied
             --}}
         @yield('content')
     </body>
