@@ -1,10 +1,43 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/static/test.css') }}">
+
+    <style>
+        p {
+            color: red;
+            display: inline;
+        }
+        .li-txt-0 {
+            color: blue;
+            background: yellow;
+            font-size: 0.75em;
+        }
+        .li-txt-2 {
+            color: orange;
+            background: blue;
+            font-size: 1em;
+        }
+        .li-txt-3 {
+            color: red;
+            background: green;
+            font-size: 1.75em;
+        }
+        .li-txt-4 {
+            color: green;
+            background: red;
+            font-size: 2em;
+        }
+        .li-txt-5 {
+            color: yellow;
+            background: orange;
+            font-size: 2.75em;
+        }
+
+    </style>
 @endpush
 
 @extends('layouts.app')
 
-<h1>If nakita ni tama ni</h1>
+<h1>If nakita ni tama ni, (Example TEST components) e Delete Lang</h1>
 
 <div>
     <h1>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Molestiae</h1>
@@ -28,6 +61,10 @@
         <li>list 2</li>
         <li>list 3</li>
     </ul>
+
+    @for ($i = 0; $i <= 5; $i++)
+        <p class='li-txt-{{ $i }}'>list {{ $i }}</p>
+    @endfor 
 </div>
 
 
