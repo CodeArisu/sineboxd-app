@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,12 +31,14 @@ class AuthController extends Controller
         }
         
         try {
-
+            // fetches the role with the role name user
+            $role = Role::where('role', 'user')->first();
             // creates a new user with the validated data
             $user = User::create([
                 'name' => $request['name'],
                 'email' => $request['email'],
                 'password' => Hash::make($request['password']),
+                'role_id' => $role->id,
             ]);
 
             // creates a token for the user
