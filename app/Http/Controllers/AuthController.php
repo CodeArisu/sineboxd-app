@@ -105,7 +105,17 @@ class AuthController extends Controller
                 'error' => $e->getMessage(),
             ], 403);
         }
+
     }
 
+    public function logout(Request $request) {
+        // revokes the token
+        $request->user()->currentAccessToken()->delete();
+
+        // returns a success message
+        return response()->json([
+            'message' => 'Logged out successfully',
+        ], 200);
+    }
 
 }
