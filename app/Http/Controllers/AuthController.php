@@ -4,12 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
-{
+{   
+    protected $authService; // declares the authService variable
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
 
     public function register(Request $request) {
         /* 
@@ -33,6 +40,7 @@ class AuthController extends Controller
         try {
             // fetches the role with the role name user
             $role = Role::where('role', 'user')->first();
+            
             // creates a new user with the validated data
             $user = User::create([
                 'name' => $request['name'],
@@ -43,6 +51,9 @@ class AuthController extends Controller
 
             // creates a token for the user
             $token = $user->createToken('auth_token')->plainTextToken;
+
+            // logs the registration event
+            $this->authService->logRegistration(new \Illuminate\Auth\Events\Registered($user));
 
             // returns the token and the user as a json response
             return response()->json([
@@ -88,8 +99,12 @@ class AuthController extends Controller
                     'message' => 'Invalid Credentials',
                 ], 403);
             }
+
             // gets the user
             $user = User::where('email', $credentials['email'])->firstOrFail();
+
+            // logs the login event
+            $this->authService->logLogin(new \Illuminate\Auth\Events\Login('web', $user, false));
 
             // creates a token for the user
             $token = $user->createToken('auth_token')->plainTextToken;
@@ -102,6 +117,10 @@ class AuthController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+            
+            // logs the failed login event
+            $this->authService->logFailedLogin(new \Illuminate\Auth\Events\Failed('web', $user, false));
+
             // simply returns the error message if an error occurs
             return response()->json([
                 'message' => 'An error occurred',
@@ -114,6 +133,9 @@ class AuthController extends Controller
     public function logout(Request $request) {
         // revokes the token
         $request->user()->currentAccessToken()->delete();
+
+        // logs the logout event
+        $this->authService->logLogout(new \Illuminate\Auth\Events\Logout('web', $request->user()));
 
         // returns a success message
         return response()->json([
