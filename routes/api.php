@@ -17,3 +17,5 @@ Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->na
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 });
+
+Route::post('/create-movie', [App\Http\Controllers\MoviewController::class, 'store'])->name('create-movie');
