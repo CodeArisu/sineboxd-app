@@ -17,9 +17,12 @@ Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->na
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
-    Route::post('/movie/create', [App\Http\Controllers\MoviewController::class, 'store'])->name('create-movie');
-    Route::get('/movie/{moviews}', [App\Http\Controllers\MoviewController::class, 'show'])->name('show-movie');
-
-    Route::delete('/movie/delete/{moviews}', [App\Http\Controllers\MoviewController::class, 'destroy'])->name('delete-movie');
-    Route::put('/movie/update/{moviews}', [App\Http\Controllers\MoviewController::class, 'update'])->name('update-movie');
+    // inserts new movies
+    Route::post('/movie/create', [App\Http\Controllers\MovieController::class, 'store'])->name('create-movie');
+    // view inserted movies
+    Route::get('/movie/{movie}', [App\Http\Controllers\MovieController::class, 'show'])->name('show-movie');
+    // deletes existing movies
+    Route::delete('/movie/delete/{movie}', [App\Http\Controllers\MovieController::class, 'destroy'])->name('delete-movie');
+    // updates movie data
+    Route::put('/movie/update/{movie}', [App\Http\Controllers\MovieController::class, 'update'])->name('update-movie');
 });

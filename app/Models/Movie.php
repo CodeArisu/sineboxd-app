@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
-class Moviews extends Model
+class Movie extends Model
 {
+    protected $table = 'movies';
     protected $primaryKey = 'id';
 
     protected $fillable = [

@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {   
         Schema::create('genres', function (Blueprint $table) {
@@ -51,7 +48,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('moviews', function (Blueprint $table) {
+        Schema::create('movies', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->longText('description');
@@ -93,6 +90,6 @@ return new class extends Migration
         Schema::dropIfExists('box_offices');
         Schema::dropIfExists('actors');
         Schema::dropIfExists('casts');
-        Schema::dropIfExists('moviews');
+        Schema::dropIfExists('movies');
     }
 };

@@ -8,14 +8,14 @@ use App\Models\Budget;
 use App\Models\Cast;
 use App\Models\Director;
 use App\Models\Genre;
-use App\Models\Moviews;
+use App\Models\Movie;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class MoviewController extends Controller
+class MovieController extends Controller
 {
 
     public function index()
@@ -32,7 +32,7 @@ class MoviewController extends Controller
     {   
         // validates overall requests
         $validated = Validator::make($request->all(), [
-            'title' => 'required|max:50|unique:moviews',
+            'title' => 'required|max:50|unique:movies',
             'description' => 'required|string',
             'genre' => 'required|max:30',
             'director' => 'required|max:30',
@@ -42,7 +42,6 @@ class MoviewController extends Controller
             'cast' => 'required|max:30',
             'release_year' => 'nullable|date'
         ]);
-        
         // returns an error if validation has issues
         if ($validated->fails()) {
             return response()->json([
@@ -82,11 +81,11 @@ class MoviewController extends Controller
             $fetch_cast = Cast::firstOrCreate([
                 'actor_id' => $fetch_actor->id
             ]);
-            
+
             // compiles and creates into one table
-            $moviews = Moviews::create([
-                'title' => $request['title'],
-                'description' => $request['description'],
+            $movie = Movie::create([
+                'title' => $request->title,
+                'description' => $request->description,
                 'genre_id' => $fetch_genre->id,
                 'director_id' => $fetch_director->id,
                 'budget_id' => $fetch_budget->id,
@@ -110,24 +109,23 @@ class MoviewController extends Controller
         }
     }
 
-    public function show(Moviews $moviews)
+    public function show(Movie $movie)
     {
         return response()->json([
             'status' => 'posted',
-            'movies' => $moviews,
+            'movies' => $movie,
         ], 200);
     }
 
-    public function edit(Moviews $moviews)
+    public function edit(Movie $movie)
     {
         // for retrieving uri form update
     }
 
-    public function update(Request $request, Moviews $moviews)
+    public function update(Request $request, Movie $movie)
     {   
         // finds the row from the movies table
-        $movie = Moviews::findOrFail($moviews->id);
-
+        $movie = Movie::findOrFail($movie->id);
         // checks if the movie doesn't exists
         if (!$movie) {
             return response()->json(['message' => 'Movie Not Found'], 401);
@@ -159,12 +157,12 @@ class MoviewController extends Controller
 
         // for updating the budget budgets
         // It will find the budget id through movies table
-        $fetch_budget = Budget::findOrFail($moviews->id) ? Budget::where('id', $moviews->id)->firstOrFail()
+        $fetch_budget = Budget::findOrFail($movie->id) ? Budget::where('id', $movie->id)->firstOrFail()
         : response()->json(['error' => 'Budget not found'], 404);
 
         // for updating the budget box office
         // It will find the revenue id through movies table
-        $fetch_box_office = BoxOffice::findOrFail($moviews->id) ? BoxOffice::where('id', $moviews->id)->firstOrFail()
+        $fetch_box_office = BoxOffice::findOrFail($movie->id) ? BoxOffice::where('id', $movie->id)->firstOrFail()
         : response()->json(['error' => 'Budget not found'], 404);
 
         try {
@@ -172,32 +170,26 @@ class MoviewController extends Controller
             $fetch_genre = Genre::updateOrCreate([
                 'genre' => $request->genre,
             ]);
-
             // for updating the director
             $fetch_director = Director::updateOrCreate([
                 'name' => $request->director
             ]);
-
             // then updates the budget if exists
             $fetch_budget->update([
                 'budget' => $request->budget
             ]);
-
             // then updates the revenue if exists
             $fetch_box_office->update([
                 'revenue' => $request->box_office
             ]);
-
             // updating actors/actresses
             $fetch_actor = Actor::updateOrCreate([
                 'name' => $request->actor
             ]);
-
             // updating casts
             $fetch_cast = Cast::updateOrCreate([
                 'actor_id' => $fetch_actor->id
             ]);
-
             // updates and persists data to the database
             $movie->fill([
                 'title' => $request['title'],
@@ -225,10 +217,10 @@ class MoviewController extends Controller
         } 
     }
 
-    public function destroy(Moviews $moviews)
+    public function destroy(Movie $movie)
     {   
-        // finds and check the movie with the id as paramet- /er
-        $movie = Moviews::findOrFail($moviews->id);
+        // finds and check the movie with the id as parameter
+        $movie = Movie::findOrFail($movie->id);
         // checks if the movie doesn't exists
         if (!$movie) {
             return response()->json(['message' => 'Movie Not Found'], 401);

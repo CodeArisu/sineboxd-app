@@ -13,7 +13,7 @@ class Genre extends Model
         'genre'
     ];
 
-    public function moviews(): BelongsToMany {
-        return $this->belongsToMany(Moviews::class);
+    public function movie(): BelongsToMany {
+        return $this->belongsToMany(Movie::class);
     }
 }

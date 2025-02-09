@@ -13,7 +13,7 @@ class Cast extends Model
         'actor_id'
     ];
 
-    public function moviews(): BelongsTo {
-        return $this->belongsTo(Moviews::class);
+    public function movie(): BelongsTo {
+        return $this->belongsTo(Movie::class);
     }
 }

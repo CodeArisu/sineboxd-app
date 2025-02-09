@@ -13,7 +13,7 @@ class BoxOffice extends Model
         'revenue'
     ];
 
-    public function moviews(): BelongsTo {
-        return $this->belongsTo(Moviews::class, 'id');
+    public function movie(): BelongsTo {
+        return $this->belongsTo(Movie::class, 'id');
     }
 }
