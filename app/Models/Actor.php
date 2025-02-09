@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Actor extends Model
 {
@@ -11,4 +13,8 @@ class Actor extends Model
     protected $fillable = [
         'name'
     ];
+
+    public function cast(): BelongsToMany {
+        return $this->belongsToMany(Cast::class);
+    }
 }

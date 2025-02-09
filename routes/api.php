@@ -16,10 +16,11 @@ Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->na
 // it is protected by the sanctum as middleware
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+
+    Route::post('/movie/create', [App\Http\Controllers\MoviewController::class, 'store'])->name('create-movie');
+    Route::get('/movie/{moviews}', [App\Http\Controllers\MoviewController::class, 'show'])->name('show-movie');
+
+    Route::delete('/movie/delete/{moviews}', [App\Http\Controllers\MoviewController::class, 'destroy'])->name('delete-movie');
 });
 
-Route::post('/movie/create', [App\Http\Controllers\MoviewController::class, 'store'])->name('create-movie');
-
-Route::get('/movie/{moviews}', [App\Http\Controllers\MoviewController::class, 'show'])->name('show-movie');
-
-Route::delete('/movie/delete/{moviews}', [App\Http\Controllers\MoviewController::class, 'destroy'])->name('delete-movie');
+Route::put('/movie/update/{moviews}', [App\Http\Controllers\MoviewController::class, 'update'])->name('update-movie');
