@@ -25,13 +25,13 @@ return new class extends Migration
 
         Schema::create('budgets', function (Blueprint $table) {
             $table->id();
-            $table->integer('budget');
+            $table->decimal('budget', 10, 2);
             $table->timestamps();
         });
 
         Schema::create('box_offices', function (Blueprint $table) {
             $table->id();
-            $table->integer('revenue');
+            $table->decimal('revenue', 10, 2);
             $table->timestamps();
         });
 

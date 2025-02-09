@@ -11,6 +11,9 @@ use App\Models\Genre;
 
 use App\Models\Moviews;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class MoviewController extends Controller
@@ -36,87 +39,62 @@ class MoviewController extends Controller
      */
     public function store(Request $request)
     {   
-        // validates only the genre request
-        $genre = Validator::make($request->only(['genre']), [
-            'genre' => 'required|max:30'
-        ]);
-        if ($genre->fails()) {
-            return response()->json(['error' => $genre->errors()], 402);
-        }
-        // stores the genre
-        $fetch_genre = Genre::create([
-            'genre' => $request['genre']
-        ]);
-
-        // validates only the director request
-        $director = Validator::make($request->only(['director']), [
-            'director' => 'required|max:30'
-        ]);
-        if ($director->fails()) {
-            return response()->json(['error' => $director->errors()], 402);
-        }
-        // stores the director
-        $fetch_director = Director::create([
-            'name' => $request['director']
+        // validates overall requests
+        $validated = Validator::make($request->all(), [
+            'title' => 'required|max:50|unique:moviews',
+            'description' => 'required|string',
+            'genre' => 'required|unique:genres|max:30',
+            'director' => 'required|unique:directors,name|max:30',
+            'budget' => 'required|int',
+            'box_office' => 'required|int',
+            'actor' => 'required|unique:actors,name|max:30',
+            'cast' => 'required|unique:casts,actor_id|max:30',
+            'release_year' => 'nullable|date'
         ]);
         
-        // validates only the director request
-        $budget = Validator::make($request->only(['budget']), [
-            'budget' => 'required|max:30'
-        ]);
-        if ($budget->fails()) {
-            return response()->json(['error' => $budget->errors()], 402);
-        }
-        // stores the budget
-        $fetch_budget = Budget::create([
-            'budget' => $request['budget']
-        ]);
-        
-        // validates only the director request
-        $box_office = Validator::make($request->only(['box_office']), [
-            'box_office' => 'required|max:30'
-        ]);
-        if ($box_office->fails()) {
-            return response()->json(['error' => $box_office->errors()], 402);
-        }
-        // stores the box_office
-        $fetch_box_office = BoxOffice::create([
-            'revenue' => $request['box_office']
-        ]);
-        
-        // validates only the director request
-        $actor = Validator::make($request->only(['actor']), [
-            'actor' => 'required|max:30'
-        ]);
-        if ($actor->fails()) {
-            return response()->json(['error' => $actor->errors()], 402);
-        }
-        // stores the actor
-        $fetch_actor = Actor::create([
-            'name' => $request['actor']
-        ]);
-        
-        // stores the actor id to casts (1 actor for now)
-        $fetch_cast = Cast::create([
-            'actor_id' => $fetch_actor->id
-        ]);
-        
-        // fetch overall validation data
-        $validated = Validator::make($request->only(['title', 'description', 'release_year']), [
-            'title' => 'required|unique:moviews|max:255',
-            'description' => 'required',
-            'release_year' => 'required|int',
-        ]);
-        // returns an error message if the request is invalid
+        // returns an error if validation has issues
         if ($validated->fails()) {
             return response()->json([
-                'message' => 'Missing Inputs',
+                'message' => 'Invalid Input(s)',
                 'errors' => $validated->errors(),
             ], 403);
         }
 
-        try {
+        // dd($request->release_year);
 
+        // validates date or return default format
+        $fetch_release = $request->release_year ? Carbon::parse($request->release_year)->toDateString() : now()->toDateString();
+
+        // using db transactions for mass inserts
+        DB::beginTransaction();
+
+        // stores genres
+        $fetch_genre = Genre::create([
+            'genre' => $request['genre'],
+        ]);
+        // stores directors
+        $fetch_director = Director::create([
+            'name' => $request['director']
+        ]);
+        // stores budgets
+        $fetch_budget = Budget::create([
+            'budget' => $request['budget']
+        ]);
+        // stores revenue
+        $fetch_box_office = BoxOffice::create([
+            'revenue' => $request['box_office']
+        ]);
+        // stores actors/actresses
+        $fetch_actor = Actor::create([
+            'name' => $request['actor']
+        ]);
+        // stores actors/actresses
+        $fetch_cast = Cast::create([
+            'actor_id' => $fetch_actor->id
+        ]);
+
+        try {
+            // dd($fetch_release);
             // compiles and creates into one table
             $moviews = Moviews::create([
                 'title' => $request['title'],
@@ -126,8 +104,11 @@ class MoviewController extends Controller
                 'budget_id' => $fetch_budget->id,
                 'box_office_id' => $fetch_box_office->id,
                 'cast_id' => $fetch_cast->id,
-                'release_year' => $request['release_year']
+                'release_year' => $fetch_release
             ]);
+
+            // commit transactions
+            DB::commit();
     
             return response()->json([
                 'Movies' => $moviews,
