@@ -54,35 +54,35 @@ class MoviewController extends Controller
         // validates date or return default format
         $fetch_release = $request->release_year ? Carbon::parse($request->release_year)->toDateString() : now()->toDateString();
 
-        // using db transactions for mass inserts
-        DB::beginTransaction();
-
-        // stores genres
-        $fetch_genre = Genre::firstOrCreate([
-            'genre' => $request->genre,
-        ]);
-        // stores directors
-        $fetch_director = Director::firstOrCreate([
-            'name' => $request->director
-        ]);
-        // stores budgets
-        $fetch_budget = Budget::create([
-            'budget' => $request->budget
-        ]);
-        // stores revenue
-        $fetch_box_office = BoxOffice::create([
-            'revenue' => $request->box_office
-        ]);
-        // stores actors/actresses
-        $fetch_actor = Actor::firstOrCreate([
-            'name' => $request->actor
-        ]);
-        // stores casts
-        $fetch_cast = Cast::firstOrCreate([
-            'actor_id' => $fetch_actor->id
-        ]);
-
         try {
+            // using db transactions for mass inserts
+            DB::beginTransaction();
+
+            // stores genres
+            $fetch_genre = Genre::firstOrCreate([
+                'genre' => $request->genre,
+            ]);
+            // stores directors
+            $fetch_director = Director::firstOrCreate([
+                'name' => $request->director
+            ]);
+            // stores budgets
+            $fetch_budget = Budget::create([
+                'budget' => $request->budget
+            ]);
+            // stores revenue
+            $fetch_box_office = BoxOffice::create([
+                'revenue' => $request->box_office
+            ]);
+            // stores actors/actresses
+            $fetch_actor = Actor::firstOrCreate([
+                'name' => $request->actor
+            ]);
+            // stores casts
+            $fetch_cast = Cast::firstOrCreate([
+                'actor_id' => $fetch_actor->id
+            ]);
+            
             // compiles and creates into one table
             $moviews = Moviews::create([
                 'title' => $request['title'],
@@ -125,7 +125,8 @@ class MoviewController extends Controller
 
     public function update(Request $request, Moviews $moviews)
     {   
-        $movie = Moviews::findOrFail($moviews);
+        // finds the row from the movies table
+        $movie = Moviews::findOrFail($moviews->id);
 
         // checks if the movie doesn't exists
         if (!$movie) {
@@ -134,7 +135,7 @@ class MoviewController extends Controller
 
         // validates all incoming requests
         $validated = Validator::make($request->all(), [
-            'title' => 'required|max:50|unique:moviews, title' . $moviews,
+            'title' => 'required|max:50',
             'description' => 'required|string',
             'genre' => 'required|max:30',
             'director' => 'required|max:30',
@@ -153,45 +154,49 @@ class MoviewController extends Controller
             ], 403);
         }
 
-        // for updating the genre
-        $fetch_genre = Genre::firstOrCreate([
-            'genre' => $request->genre,
-        ]);
-
-        // for updating the director
-        $fetch_director = Director::firstOrCreate([
-            'name' => $request->director
-        ]);
+        // fetches the new date input on standard format 'YYYY-MM-DD'
+        $fetch_release = $request->release_year ? Carbon::parse($request->release_year)->toDateString() : now()->toDateString();
 
         // for updating the budget budgets
         // It will find the budget id through movies table
-        $fetch_budget = Budget::findOrFail($moviews->budget->id);
-        // then updates the budget if exists
-        $fetch_budget->update([
-            'budget' => $request->budget
-        ]);
+        $fetch_budget = Budget::findOrFail($moviews->id) ? Budget::where('id', $moviews->id)->firstOrFail()
+        : response()->json(['error' => 'Budget not found'], 404);
 
         // for updating the budget box office
         // It will find the revenue id through movies table
-        $fetch_box_office = BoxOffice::findOrFail($moviews->revenue->id);
-        // then updates the revenue if exists
-        $fetch_box_office->update([
-            'revenue' => $request->box_office
-        ]);
-
-        // updating actors/actresses
-        $fetch_actor = Actor::firstOrCreate([
-            'name' => $request->actor
-        ]);
-
-        // updating casts
-        $fetch_cast = Cast::firstOrCreate([
-            'actor_id' => $fetch_actor->id
-        ]);
+        $fetch_box_office = BoxOffice::findOrFail($moviews->id) ? BoxOffice::where('id', $moviews->id)->firstOrFail()
+        : response()->json(['error' => 'Budget not found'], 404);
 
         try {
-            // fetches the new date input on standard format 'YYYY-MM-DD'
-            $fetch_release = $request->release_year ? Carbon::parse($request->release_year)->toDateString() : now()->toDateString();
+            // for updating the genre
+            $fetch_genre = Genre::updateOrCreate([
+                'genre' => $request->genre,
+            ]);
+
+            // for updating the director
+            $fetch_director = Director::updateOrCreate([
+                'name' => $request->director
+            ]);
+
+            // then updates the budget if exists
+            $fetch_budget->update([
+                'budget' => $request->budget
+            ]);
+
+            // then updates the revenue if exists
+            $fetch_box_office->update([
+                'revenue' => $request->box_office
+            ]);
+
+            // updating actors/actresses
+            $fetch_actor = Actor::updateOrCreate([
+                'name' => $request->actor
+            ]);
+
+            // updating casts
+            $fetch_cast = Cast::updateOrCreate([
+                'actor_id' => $fetch_actor->id
+            ]);
 
             // updates and persists data to the database
             $movie->fill([
@@ -202,7 +207,8 @@ class MoviewController extends Controller
                 'budget_id' => $fetch_budget->id,
                 'box_office_id' => $fetch_box_office->id,
                 'cast_id' => $fetch_cast->id,
-                'release_year' => $fetch_release
+                'release_year' => $fetch_release,
+                'updated_at' => now()
             ]);
             // saves the persists data to the database
             $movie->save();

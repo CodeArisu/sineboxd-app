@@ -21,6 +21,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/movie/{moviews}', [App\Http\Controllers\MoviewController::class, 'show'])->name('show-movie');
 
     Route::delete('/movie/delete/{moviews}', [App\Http\Controllers\MoviewController::class, 'destroy'])->name('delete-movie');
+    Route::put('/movie/update/{moviews}', [App\Http\Controllers\MoviewController::class, 'update'])->name('update-movie');
 });
-
-Route::put('/movie/update/{moviews}', [App\Http\Controllers\MoviewController::class, 'update'])->name('update-movie');

@@ -20,6 +20,7 @@ class Moviews extends Model
         'box_office_id',
         'cast_id',
         'release_year',
+        'updated_at'
     ];
 
     public function genre() : HasMany {
@@ -31,11 +32,11 @@ class Moviews extends Model
     }
 
     public function budget() : HasOne {
-        return $this->hasOne(Budget::class);
+        return $this->hasOne(Budget::class, 'id');
     }
 
     public function boxOffice() : HasOne {
-        return $this->hasOne(BoxOffice::class);
+        return $this->hasOne(BoxOffice::class, 'id');
     }
 
     public function cast() : HasOne {

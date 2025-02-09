@@ -14,6 +14,6 @@ class Budget extends Model
     ];
 
     public function moviews(): BelongsTo {
-        return $this->belongsTo(Moviews::class);
+        return $this->belongsTo(Moviews::class, 'budget_id');
     }
 }
