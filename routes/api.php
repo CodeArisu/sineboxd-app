@@ -13,9 +13,13 @@ Route::post('/register', [App\Http\Controllers\AuthController::class, 'register'
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login');
 
 // Logout end point
-// it is protected by the sanctum middleware
+// it is protected by the sanctum as middleware
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 });
 
-Route::post('/create-movie', [App\Http\Controllers\MoviewController::class, 'store'])->name('create-movie');
+Route::post('/movie/create', [App\Http\Controllers\MoviewController::class, 'store'])->name('create-movie');
+
+Route::get('/movie/{moviews}', [App\Http\Controllers\MoviewController::class, 'show'])->name('show-movie');
+
+Route::delete('/movie/delete/{moviews}', [App\Http\Controllers\MoviewController::class, 'destroy'])->name('delete-movie');

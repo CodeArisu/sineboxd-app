@@ -60,8 +60,6 @@ class MoviewController extends Controller
             ], 403);
         }
 
-        // dd($request->release_year);
-
         // validates date or return default format
         $fetch_release = $request->release_year ? Carbon::parse($request->release_year)->toDateString() : now()->toDateString();
 
@@ -70,31 +68,31 @@ class MoviewController extends Controller
 
         // stores genres
         $fetch_genre = Genre::create([
-            'genre' => $request['genre'],
+            'genre' => $request->genre,
         ]);
         // stores directors
         $fetch_director = Director::create([
-            'name' => $request['director']
+            'name' => $request->director
         ]);
         // stores budgets
         $fetch_budget = Budget::create([
-            'budget' => $request['budget']
+            'budget' => $request->budget
         ]);
         // stores revenue
         $fetch_box_office = BoxOffice::create([
-            'revenue' => $request['box_office']
+            'revenue' => $request->box_office
         ]);
         // stores actors/actresses
         $fetch_actor = Actor::create([
-            'name' => $request['actor']
+            'name' => $request->actor
         ]);
-        // stores actors/actresses
+        // stores casts
         $fetch_cast = Cast::create([
             'actor_id' => $fetch_actor->id
         ]);
 
         try {
-            // dd($fetch_release);
+
             // compiles and creates into one table
             $moviews = Moviews::create([
                 'title' => $request['title'],
@@ -111,7 +109,7 @@ class MoviewController extends Controller
             DB::commit();
     
             return response()->json([
-                'Movies' => $moviews,
+                'message' => $request->title . ' was added successfully',
             ], 201);
 
         } catch (\Exception $e) {
@@ -127,7 +125,10 @@ class MoviewController extends Controller
      */
     public function show(Moviews $moviews)
     {
-        //
+        return response()->json([
+            'status' => 'posted',
+            'movies' => $moviews,
+        ], 200);
     }
 
     /**
@@ -150,7 +151,15 @@ class MoviewController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(Moviews $moviews)
-    {
-        //
+    {   
+        // finds and check the movie with the id as paramet- /er
+        $movie = Moviews::findOrFail($moviews->id);
+        // checks if the movie doesn't exists
+        if (!$movie) {
+            return response()->json(['message' => 'Movie Not Found'], 401);
+        }
+        // deletes the movie
+        $movie->delete();
+        return response()->json(['message' => 'Movie deleted successfully'], 200);
     }
 }
