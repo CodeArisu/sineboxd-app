@@ -192,8 +192,8 @@ class MovieController extends Controller
             ]);
             // updates and persists data to the database
             $movie->fill([
-                'title' => $request['title'],
-                'description' => $request['description'],
+                'title' => $request->title,
+                'description' => $request->description,
                 'genre_id' => $fetch_genre->id,
                 'director_id' => $fetch_director->id,
                 'budget_id' => $fetch_budget->id,
