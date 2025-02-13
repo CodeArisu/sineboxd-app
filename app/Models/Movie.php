@@ -15,7 +15,6 @@ class Movie extends Model
     protected $fillable = [
         'title',
         'description',
-        'genre_id',
         'director_id',
         'budget_id',
         'box_office_id',

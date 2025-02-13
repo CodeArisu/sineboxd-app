@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Cast extends Model
+class MovieCast extends Model
 {
     protected $primaryKey = 'id';
 
@@ -15,5 +16,9 @@ class Cast extends Model
 
     public function movie(): BelongsTo {
         return $this->belongsTo(Movie::class);
+    }
+
+    public function actor(): BelongsToMany {
+        return $this->belongsToMany(Actor::class);
     }
 }

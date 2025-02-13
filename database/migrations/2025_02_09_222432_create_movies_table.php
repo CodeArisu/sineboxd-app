@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -38,7 +39,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('casts', function (Blueprint $table) {
+        Schema::create('movie_casts', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('actor_id')
@@ -53,10 +54,6 @@ return new class extends Migration
             $table->string('title');
             $table->longText('description');
 
-            $table->foreignId('genre_id')
-            ->constrained('genres')
-            ->onDelete('cascade');
-
             $table->foreignId('director_id')
             ->constrained('directors')
             ->onDelete('cascade');
@@ -69,12 +66,26 @@ return new class extends Migration
             ->constrained('box_offices')
             ->onDelete('cascade');
 
-            $table->foreignId('cast_id')
-            ->constrained('casts')
+            $table->foreignId('casts_id')
+            ->constrained('movie_casts')
             ->onDelete('cascade');
 
             $table->date('release_year')->nullable();
 
+            $table->timestamps();
+        });
+
+        Schema::create('movie_genres', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('movie_id')
+            ->constrained('movies')
+            ->onDelete('cascade');
+
+            $table->foreignId('genre_id')
+            ->constrained('genres')
+            ->onDelete('cascade');
+            
             $table->timestamps();
         });
     }
@@ -91,5 +102,7 @@ return new class extends Migration
         Schema::dropIfExists('actors');
         Schema::dropIfExists('casts');
         Schema::dropIfExists('movies');
+        Schema::dropIfExists('movie_genres');
+        Schema::dropIfExists('movie_casts');
     }
 };

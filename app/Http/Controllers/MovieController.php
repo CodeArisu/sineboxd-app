@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Actor;
 use App\Models\BoxOffice;
 use App\Models\Budget;
-use App\Models\Cast;
 use App\Models\Director;
-use App\Models\Genre;
+use App\Models\MovieCast;
 use App\Models\Movie;
 
 use Illuminate\Http\Request;
@@ -34,13 +33,16 @@ class MovieController extends Controller
         $validated = Validator::make($request->all(), [
             'title' => 'required|max:50|unique:movies',
             'description' => 'required|string',
-            'genre' => 'required|max:30',
             'director' => 'required|max:30',
             'budget' => 'required|int',
             'box_office' => 'required|int',
             'actor' => 'required|max:30',
             'cast' => 'required|max:30',
-            'release_year' => 'nullable|date'
+            'release_year' => 'nullable|date',
+            
+            // resolves array genres
+            'genres' => 'required|array',
+            'genres.*' => 'exists:genre, id'
         ]);
         // returns an error if validation has issues
         if ($validated->fails()) {
@@ -57,10 +59,6 @@ class MovieController extends Controller
             // using db transactions for mass inserts
             DB::beginTransaction();
 
-            // stores genres
-            $fetch_genre = Genre::firstOrCreate([
-                'genre' => $request->genre,
-            ]);
             // stores directors
             $fetch_director = Director::firstOrCreate([
                 'name' => $request->director
@@ -78,7 +76,7 @@ class MovieController extends Controller
                 'name' => $request->actor
             ]);
             // stores casts
-            $fetch_cast = Cast::firstOrCreate([
+            $fetch_cast = MovieCast::firstOrCreate([
                 'actor_id' => $fetch_actor->id
             ]);
 
@@ -86,13 +84,15 @@ class MovieController extends Controller
             $movie = Movie::create([
                 'title' => $request->title,
                 'description' => $request->description,
-                'genre_id' => $fetch_genre->id,
                 'director_id' => $fetch_director->id,
                 'budget_id' => $fetch_budget->id,
                 'box_office_id' => $fetch_box_office->id,
                 'cast_id' => $fetch_cast->id,
                 'release_year' => $fetch_release
             ]);
+
+            // stores genres
+            $movie->genres()->attach($request->genres);
 
             // commit transactions
             DB::commit();
@@ -135,13 +135,16 @@ class MovieController extends Controller
         $validated = Validator::make($request->all(), [
             'title' => 'required|max:50',
             'description' => 'required|string',
-            'genre' => 'required|max:30',
             'director' => 'required|max:30',
             'budget' => 'required|int',
             'box_office' => 'required|int',
             'actor' => 'required|max:30',
             'cast' => 'required|max:30',
-            'release_year' => 'nullable|date'
+            'release_year' => 'nullable|date',
+            
+            // resolves array genres
+            'genres' => 'required|array',
+            'genres.*' => 'exists:genre, id'
         ]);
 
          // returns an error if validation has issues
@@ -166,10 +169,6 @@ class MovieController extends Controller
         : response()->json(['error' => 'Budget not found'], 404);
 
         try {
-            // for updating the genre
-            $fetch_genre = Genre::updateOrCreate([
-                'genre' => $request->genre,
-            ]);
             // for updating the director
             $fetch_director = Director::updateOrCreate([
                 'name' => $request->director
@@ -187,14 +186,13 @@ class MovieController extends Controller
                 'name' => $request->actor
             ]);
             // updating casts
-            $fetch_cast = Cast::updateOrCreate([
+            $fetch_cast = MovieCast::updateOrCreate([
                 'actor_id' => $fetch_actor->id
             ]);
             // updates and persists data to the database
             $movie->fill([
                 'title' => $request->title,
                 'description' => $request->description,
-                'genre_id' => $fetch_genre->id,
                 'director_id' => $fetch_director->id,
                 'budget_id' => $fetch_budget->id,
                 'box_office_id' => $fetch_box_office->id,
@@ -202,6 +200,13 @@ class MovieController extends Controller
                 'release_year' => $fetch_release,
                 'updated_at' => now()
             ]);
+
+            // for updating multiple genre
+            $fetch_genre = $movie->genres()->pluck('id')->toArray();
+            if(!empty($fetch_genre)) {
+                $movie->genres()->sync($request->genres);
+            }
+
             // saves the persists data to the database
             $movie->save();
 
