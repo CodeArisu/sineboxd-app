@@ -18,7 +18,6 @@ class Movie extends Model
         'director_id',
         'budget_id',
         'box_office_id',
-        'cast_id',
         'release_year',
         'updated_at'
     ];

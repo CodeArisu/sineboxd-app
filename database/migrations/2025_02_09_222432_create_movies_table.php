@@ -36,16 +36,7 @@ return new class extends Migration
         Schema::create('actors', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->timestamps();
-        });
-
-        Schema::create('movie_casts', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('actor_id')
-            ->constrained('actors')
-            ->onDelete('cascade');
-
+            $table->string('nationality')->nullable();
             $table->timestamps();
         });
 
@@ -86,6 +77,23 @@ return new class extends Migration
             ->constrained('genres')
             ->onDelete('cascade');
             
+            $table->timestamps();
+        });
+
+        Schema::create('movie_casts', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('actor_id')
+            ->constrained('actors')
+            ->onDelete('cascade');
+
+            $table->foreignId('movie_id')
+            ->constrained('movies')
+            ->onDelete('cascade');
+
+            $table->string('role')->nullable();
+            $table->string('character_name');
+
             $table->timestamps();
         });
     }

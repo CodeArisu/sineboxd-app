@@ -11,7 +11,8 @@ class Actor extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'name'
+        'name',
+        'nationality'
     ];
 
     public function cast(): BelongsToMany {

@@ -6,7 +6,7 @@ use App\Models\Actor;
 use App\Models\BoxOffice;
 use App\Models\Budget;
 use App\Models\Director;
-use App\Models\MovieCast;
+use App\Models\Cast;
 use App\Models\Movie;
 
 use Illuminate\Http\Request;
@@ -33,16 +33,21 @@ class MovieController extends Controller
         $validated = Validator::make($request->all(), [
             'title' => 'required|max:50|unique:movies',
             'description' => 'required|string',
-            'director' => 'required|max:30',
+            'director' => 'required|max:255',
             'budget' => 'required|int',
             'box_office' => 'required|int',
-            'actor' => 'required|max:30',
-            'cast' => 'required|max:30',
             'release_year' => 'nullable|date',
             
             // resolves array genres
             'genres' => 'required|array',
-            'genres.*' => 'exists:genre, id'
+            'genres.*' => 'exists:genres, id',
+
+            // resolves actors
+            'actors' => 'required|array|max:255',
+
+            // multiple actors array
+            'casts.*.character_name' => 'required|string|max:255',
+            'casts.*.role' => 'nullable|string|max:255'
         ]);
         // returns an error if validation has issues
         if ($validated->fails()) {
@@ -71,15 +76,15 @@ class MovieController extends Controller
             $fetch_box_office = BoxOffice::create([
                 'revenue' => $request->box_office
             ]);
-            // stores actors/actresses
-            $fetch_actor = Actor::firstOrCreate([
-                'name' => $request->actor
-            ]);
-            // stores casts
-            $fetch_cast = MovieCast::firstOrCreate([
-                'actor_id' => $fetch_actor->id
-            ]);
-
+            
+            foreach($request['actors'] as $actors) {
+                // stores actors/actresses
+                $fetch_actor = Actor::firstOrCreate([
+                    'name' => $request->actor_name,
+                    'nationality' => $request->nationality
+                ]);
+            }
+            
             // compiles and creates into one table
             $movie = Movie::create([
                 'title' => $request->title,
@@ -87,12 +92,21 @@ class MovieController extends Controller
                 'director_id' => $fetch_director->id,
                 'budget_id' => $fetch_budget->id,
                 'box_office_id' => $fetch_box_office->id,
-                'cast_id' => $fetch_cast->id,
                 'release_year' => $fetch_release
             ]);
 
             // stores genres
             $movie->genres()->attach($request->genres);
+
+            foreach($fetch_actor['actor'] as $actors) {
+                // stores casts
+                Cast::firstOrCreate([
+                    'movie_id' => $movie->id,
+                    'actor_id' => $actors->id,
+                    'character_name' => $actors->character_name,
+                    'role' => $actors->role ?? 'Support',
+                ]);
+            }
 
             // commit transactions
             DB::commit();
@@ -144,7 +158,7 @@ class MovieController extends Controller
             
             // resolves array genres
             'genres' => 'required|array',
-            'genres.*' => 'exists:genre, id'
+            'genres.*' => 'exists:genre, id',
         ]);
 
          // returns an error if validation has issues
@@ -186,7 +200,7 @@ class MovieController extends Controller
                 'name' => $request->actor
             ]);
             // updating casts
-            $fetch_cast = MovieCast::updateOrCreate([
+            $fetch_cast = Cast::updateOrCreate([
                 'actor_id' => $fetch_actor->id
             ]);
             // updates and persists data to the database
