@@ -57,16 +57,12 @@ return new class extends Migration
             ->constrained('box_offices')
             ->onDelete('cascade');
 
-            $table->foreignId('casts_id')
-            ->constrained('movie_casts')
-            ->onDelete('cascade');
-
             $table->date('release_year')->nullable();
 
             $table->timestamps();
         });
 
-        Schema::create('movie_genres', function (Blueprint $table) {
+        Schema::create('genre_movie', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('movie_id')
@@ -80,7 +76,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('movie_casts', function (Blueprint $table) {
+        Schema::create('cast_movie', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('actor_id')

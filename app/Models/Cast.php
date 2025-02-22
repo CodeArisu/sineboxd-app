@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Cast extends Model
-{
+{   
+    protected $table = 'cast_movie';
     protected $primaryKey = 'id';
 
     protected $fillable = [

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Actor extends Model
 {
+    protected $table = 'actors';
     protected $primaryKey = 'id';
 
     protected $fillable = [
