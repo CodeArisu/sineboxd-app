@@ -33,10 +33,10 @@ class CreateMovieTest extends TestCase
             ],
 
             'casts' => [
-                [ 'role' => 'Main Character', 'character_name' => 'Cooper'],
-                [ 'role' => 'Main Character', 'character_name' => 'Murphy'],
-                [ 'role' => 'Supporting', 'character_name' => 'Brand'],
-                [ 'role' => 'Supporting', 'character_name' => 'Tom']
+                ['role' => 'Main Character', 'character_name' => 'Cooper'],
+                ['role' => 'Main Character', 'character_name' => 'Murphy'],
+                ['role' => 'Supporting', 'character_name' => 'Brand'],
+                ['role' => 'Supporting', 'character_name' => 'Tom']
             ],
             
             'budget' => 165,

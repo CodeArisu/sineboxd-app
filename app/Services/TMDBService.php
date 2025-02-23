@@ -8,22 +8,46 @@ class TMDBService
 {
     protected $baseUrl;
     protected $apiKey;
+    protected $en_lang;
 
     public function __construct()
     {
         $this->baseUrl = config('services.tmdb.base_url');
         $this->apiKey = config('services.tmdb.api_key');
+        $this->en_lang = 'en-US';
+    }
+
+    // indirect fetching through endpoint and pages
+    public function fetchMoviesByPages($endpoint, $page) {
+        $apiUrl = "{$this->baseUrl}movie/{$endpoint}";
+        $response = Http::get($apiUrl, [
+            'api_key' => $this->apiKey,
+            'language' => $this->en_lang,
+            'page' => $page
+        ]);
+        return $response;
     }
 
     public function fetchLatestMovies() 
-    {
-        $response = Http::get('{$this->baseUrl}movie/now_playing', [
+    {   
+        // API url endpoint
+        $apiUrl = "{$this->baseUrl}movie/now_playing";
+        // gets latest movies from now_playing endpoint
+        $response = Http::get($apiUrl, [
             'api_key' => $this->apiKey,
-            'language' => 'en_US',
-            'page' => 1
+            'language' => $this->en_lang,
         ]);
+        return $response;
+    }
 
-        return $response->json()['results'] ?? [];
+    public function fetchPopularMovies()
+    {   
+        // gets latest movies from popular endpoint
+        $response = Http::get("{$this->baseUrl}movie/popular", [
+            'api_key' => $this->apiKey,
+            'language' => $this->en_lang,
+        ]);
+        return $response;
     }
 
 }
