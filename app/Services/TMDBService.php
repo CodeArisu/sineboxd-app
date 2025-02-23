@@ -26,6 +26,4 @@ class TMDBService
         return $response->json()['results'] ?? [];
     }
 
-
-
 }

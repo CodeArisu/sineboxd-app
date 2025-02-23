@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\FetchMovieService;
 use App\services\TMDBService;
 use Illuminate\Console\Command;
 
@@ -35,9 +36,8 @@ class FetchMoviesFromTMDB extends Command
     public function handle()
     {
         $movies = $this->tmdbService->fetchLatestMovies();
+        $movieService = new FetchMovieService();
 
-        foreach ($movies as $movie) {
-            // movie store to database      
-        }
+        $movieService->storeMultipleMovies($movies);
     }
 }
