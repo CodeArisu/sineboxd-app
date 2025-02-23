@@ -26,15 +26,12 @@ class Movie extends Model
     public function genre() : BelongsToMany {
         return $this->belongsToMany(Genre::class)->withTimestamps();
     }
-
     public function director() : HasOneOrMany {
         return $this->hasMany(Director::class);
     }
-
     public function budget() : HasOne {
         return $this->hasOne(Budget::class, 'id');
     }
-
     public function boxOffice() : HasOne {
         return $this->hasOne(BoxOffice::class, 'id');
     }

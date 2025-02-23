@@ -67,7 +67,16 @@ class MovieController extends Controller
     // checks genre request array
     protected function check_genre_array($request)
     {
-        return !empty($request->genres) || (is_array($request->genres) && count($request->genres) > 0) ? true : false;
+        return !empty($request->genres) 
+        || (is_array($request->genres) 
+        && count($request->genres) > 0) ? true : false;
+    }
+    // checks actor request array
+    protected function check_actor_array($request)
+    {
+        return !empty($request->actors) 
+        || (is_array($request->actors) 
+        && count($request->actors) > 0) ? true : false;
     }
 
     // queries genres
@@ -91,7 +100,7 @@ class MovieController extends Controller
     protected function insert_actor($request)
     {
         # checks if the requests actors are present
-        if (!empty($request->actors) || (is_array($request->actors) && count($request->actors) > 0)) {
+        if ($this->check_actor_array($request)) {
             $actors = collect();
             foreach ($request->actors as $actorData) {
                 $actor = Actor::firstOrCreate(
@@ -115,7 +124,9 @@ class MovieController extends Controller
     protected function insert_movie($request)
     {
         // validates date or return default format
-        $fetch_release = $request->release_year ? Carbon::parse($request->release_year)->toDateString() : now()->toDateString();
+        $fetch_release = $request->release_year 
+        ? Carbon::parse($request->release_year)->toDateString() 
+        : now()->toDateString();
         // stores directors
         $fetch_director = Director::firstOrCreate([
             'name' => $request->director,
@@ -152,6 +163,13 @@ class MovieController extends Controller
                     'character_name' => $cast['character_name'],
                     'role' => $cast['role'] ?? 'Support',
                 ]);
+            } else {
+                Cast::firstOrCreate([
+                    'movie_id' => $movie->id,
+                    'actor_id' => $actor->id,
+                    'character_name' => $request->character_name,
+                    'role' => $request->role ?? "Support"
+                ]);
             }
         }
     }
@@ -160,10 +178,10 @@ class MovieController extends Controller
     {
         // validates overall requests
         $this->request_validation($request);
-
         try {
             // using db transactions for mass inserts
             DB::beginTransaction();
+
             $actor = $this->insert_actor($request);
             $movie = $this->insert_movie($request);
             $this->insert_genre($request, $movie);
@@ -204,6 +222,49 @@ class MovieController extends Controller
         // for retrieving uri form update
     }
 
+    protected function update_actors($request) {
+         # checks if the requests actors are present
+         if ($this->check_actor_array($request)) {
+            $actors = collect();
+            foreach ($request->actors as $actorData) {
+                $actor = Actor::updateOrCreate(
+                    ['name' => $actorData['actor_name']], // Ensure uniqueness
+                    ['nationality' => $actorData['nationality'] ?? 'Unknown']
+                );
+
+            $actors->push($actor); // Store all inserted/found actors
+        }
+
+        return $actors; // Return a collection of actors
+        } else {
+            return Actor::updateOrCreate([
+                'name' => $request->actor_name,
+                'nationality' => $request->nationality ?? 'Unknown',
+            ]);
+        }
+    }
+
+    protected function update_casts($request, $movie, $actor) {
+        // updating casts
+        foreach ($request['casts'] as $index => $cast) {
+            if (isset($actor[$index])) { // Ensure actor exists for this role
+                Cast::firstOrCreate([
+                    'movie_id' => $movie->id,
+                    'actor_id' => $actor[$index]->id, // Correctly assign actor
+                    'character_name' => $cast['character_name'],
+                    'role' => $cast['role'] ?? 'Support',
+                ]);
+            } else {
+                Cast::firstOrCreate([
+                    'movie_id' => $movie->id,
+                    'actor_id' => $actor->id,
+                    'character_name' => $request->character_name,
+                    'role' => $request->role ?? "Support"
+                ]);
+            }
+        }
+    }
+
     public function update(Request $request, Movie $movie)
     {
         // finds the row from the movies table
@@ -240,13 +301,7 @@ class MovieController extends Controller
                 'revenue' => $request->box_office,
             ]);
             // updating actors/actresses
-            $fetch_actor = Actor::updateOrCreate([
-                'name' => $request->actor,
-            ]);
-            // updating casts
-            $fetch_cast = Cast::updateOrCreate([
-                'actor_id' => $fetch_actor->id,
-            ]);
+            $actors = $this->update_actors($request);
             // updates and persists data to the database
             $movie->fill([
                 'title' => $request->title,
@@ -254,19 +309,20 @@ class MovieController extends Controller
                 'director_id' => $fetch_director->id,
                 'budget_id' => $fetch_budget->id,
                 'box_office_id' => $fetch_box_office->id,
-                'cast_id' => $fetch_cast->id,
                 'release_year' => $fetch_release,
                 'updated_at' => now(),
             ]);
+
+            // updates casts
+            $this->update_casts($request, $movie, $actors);
+            // saves the persists data to the database
+            $movie->save();
 
             // for updating multiple genre
             $fetch_genre = $movie->genres()->pluck('id')->toArray();
             if (!empty($fetch_genre)) {
                 $movie->genres()->sync($request->genres);
             }
-
-            // saves the persists data to the database
-            $movie->save();
 
             return response()->json(
                 [
