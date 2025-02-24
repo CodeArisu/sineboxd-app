@@ -28,6 +28,22 @@ class TMDBService
         return $response;
     }
 
+    public function fetchMoviesByDetails($endpoint, $id) {
+        $apiUrl = "{$this->baseUrl}movie/{$id}/{$endpoint}";
+        $response = Http::get($apiUrl, [
+            'api_key' => $this->apiKey,
+        ]);
+        return $response;
+    }
+
+    public function fetchMoviesById($id) {
+        $apiUrl = "{$this->baseUrl}movie/{$id}";
+        $response = Http::get($apiUrl, [
+            'api_key' => $this->apiKey,
+        ]);
+        return $response;
+    }
+
     public function fetchLatestMovies() 
     {   
         // API url endpoint

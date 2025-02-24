@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Movie;
 use App\Services\FetchMovieService;
 use App\services\TMDBService;
 use Illuminate\Console\Command;
@@ -21,7 +22,7 @@ class FetchMoviesFromTMDB extends Command
      * @var string
      */
     protected $description = 'Fetch Movies from TMDB and store in Database';
-    protected $endpoints = ['now_playing', 'popular'];
+    protected $endpoints = ['now_playing', 'popular', 'credits'];
     protected $tmdbService;
 
 
@@ -36,6 +37,7 @@ class FetchMoviesFromTMDB extends Command
      */
     public function handle()
     {   
+        $movieService = new FetchMovieService();
         $this->info('Fetching number of pages from TMDB API!');
         // checks response from TMDB service
         $response = $this->tmdbService->fetchLatestMovies();
@@ -62,23 +64,57 @@ class FetchMoviesFromTMDB extends Command
 
         // loops through the process of fetching pages
         for ($page = 1; $page <= $totalPages; $page++) {
-            $progressBar->advance();
             $response = $this->tmdbService->fetchMoviesByPages($this->endpoints[0], $page);
+            
             if ($response->failed()) {
                 $this->error("failed to fetch data from TMDB API on page->{$page}.");
                 return Command::FAILURE;
             }
 
             $movies = $response->json()['results'] ?? [];
-            // debug purposes
-            if ($page === 2) {
-                dd($movies);
-                $this->info("Stopped at page {$page}.");
-                break;
+
+            foreach ($movies as $movie) {
+                $progressBar->advance();
+                // checks if there is movie to be found
+                if(!$movie) {
+                    $this->error("No movies found.");
+                    return Command::FAILURE;
+                    break;
+                }
+
+                $movieCreditResponse = $this->tmdbService->fetchMoviesByDetails($this->endpoints[2], $movie['id']);
+                if ($movieCreditResponse->failed()) {
+                    $this->error("failed to fetch crew on {$movies->title} from TMDB API at page->{$page}.");
+                    return Command::FAILURE;
+                }
+
+                $movieDetailResponse = $this->tmdbService->fetchMoviesById($movie['id']);
+                if ($movieDetailResponse->failed()) {
+                    $this->error("failed to fetch crew on {$movies->title} from TMDB API at page->{$page}.");
+                    return Command::FAILURE;
+                }
+
+                // only filters crew column
+                $movieCredit = $movieCreditResponse->json();
+                $movieDetail = $movieDetailResponse->json();
+
+                // extract relevant data
+                $crew = $movieCredit['crew'] ?? [];
+                $budget = $movieDetail['budget'] ?? null;
+                $revenue = $movieDetail['revenue'] ?? null;
+
+                // stores each data individually
+                $movieService->storeDirector($crew);
+                $movieService->storeBudget($budget);
+                $movieService->storeBoxOffice($revenue);
+                
+                $movieService->storeMovie($movie);
             }
         }
 
-        // $movieService = new FetchMovieService();
-        // $movieService->storeMultipleMovies($movies);
+        $progressBar->finish();
+        $this->newLine();
+        $this->info('Movies added successfully');
+        return Command::SUCCESS;
     }
 }

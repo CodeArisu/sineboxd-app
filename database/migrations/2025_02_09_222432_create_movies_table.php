@@ -23,13 +23,13 @@ return new class extends Migration
 
         Schema::create('budgets', function (Blueprint $table) {
             $table->id();
-            $table->decimal('budget', 10, 2);
+            $table->decimal('budget', 16, 2);
             $table->timestamps();
         });
 
         Schema::create('box_offices', function (Blueprint $table) {
             $table->id();
-            $table->decimal('revenue', 10, 2);
+            $table->decimal('revenue', 16, 2);
             $table->timestamps();
         });
 
@@ -51,11 +51,13 @@ return new class extends Migration
 
             $table->foreignId('budget_id')
             ->constrained('budgets')
-            ->onDelete('cascade');
+            ->onDelete('cascade')
+            ->nullable();
 
             $table->foreignId('box_office_id')
             ->constrained('box_offices')
-            ->onDelete('cascade');
+            ->onDelete('cascade')
+            ->nullable();
 
             $table->date('release_year')->nullable();
 

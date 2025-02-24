@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
@@ -24,7 +23,8 @@ class Movie extends Model
     ];
 
     public function genre() : BelongsToMany {
-        return $this->belongsToMany(Genre::class)->withTimestamps();
+        return $this->belongsToMany(Genre::class)
+        ->withTimestamps();
     }
     public function director() : HasOneOrMany {
         return $this->hasMany(Director::class);
@@ -36,6 +36,7 @@ class Movie extends Model
         return $this->hasOne(BoxOffice::class, 'id');
     }
     public function cast() : HasOne {
-        return $this->hasOne(Cast::class);
+        return $this->hasOne(Cast::class)
+        ->withTimestamps();
     }
 }
