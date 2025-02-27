@@ -19,6 +19,7 @@ class TMDBService
 
     // indirect fetching through endpoint and pages
     public function fetchMoviesByPages($endpoint, $page) {
+        // movie with endpoint
         $apiUrl = "{$this->baseUrl}movie/{$endpoint}";
         $response = Http::get($apiUrl, [
             'api_key' => $this->apiKey,
@@ -29,6 +30,7 @@ class TMDBService
     }
 
     public function fetchMoviesByDetails($endpoint, $id) {
+        // movie id with endpoint
         $apiUrl = "{$this->baseUrl}movie/{$id}/{$endpoint}";
         $response = Http::get($apiUrl, [
             'api_key' => $this->apiKey,
@@ -37,6 +39,7 @@ class TMDBService
     }
 
     public function fetchMoviesById($id) {
+        // movie id endpoint
         $apiUrl = "{$this->baseUrl}movie/{$id}";
         $response = Http::get($apiUrl, [
             'api_key' => $this->apiKey,

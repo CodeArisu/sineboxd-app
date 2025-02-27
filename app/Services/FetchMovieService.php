@@ -51,7 +51,6 @@ class FetchMovieService
         # stores movies simultaneous 
         foreach ($movies as $movie)
         {   
-            
             $this->storeMovie($movie);
         }
     }
