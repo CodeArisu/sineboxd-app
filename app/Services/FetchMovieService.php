@@ -4,14 +4,25 @@ namespace App\Services;
 
 use App\Models\BoxOffice;
 use App\Models\Budget;
+use App\Models\Category;
 use App\Models\Director;
 use App\Models\Movie;
 use Illuminate\Support\Facades\Log;
 
 class FetchMovieService 
-{   
+{      
 
-    public function storeDirector($crew)
+    private $category;
+    private $director, $budget, $revenue;
+
+    private function storeCategories($category)
+    {   
+        return Category::firstOrCreate([
+            'category' => $category
+        ])->id;
+    }
+
+    private function storeDirector($crew)
     {   
         // only gets the directors name
         $director = collect($crew)->firstWhere('job', 'Director');
@@ -19,44 +30,48 @@ class FetchMovieService
             'name' => $director['name']
         ])->id;
     }
-    public function storeBudget($budget)
+    private function storeBudget($budget)
     {   
         return Budget::create([
             'budget' => $budget
         ])->id;
     }
-    public function storeBoxOffice($revenue)
+    private function storeBoxOffice($revenue)
     {   
         return BoxOffice::create([
             'revenue' => $revenue
         ])->id;
     }
 
-    private function storeMovie($movie, $director, $budget, $revenue)
+    private function storeMovie($movie)
     {   
         return Movie::firstOrCreate([
             'title' => $movie['title'],
             'description' => $movie['overview'],
-            'director_id' => $director,
-            'budget_id' => $budget,
-            'box_office_id' => $revenue,
+            'director_id' => $this->director,
+            'budget_id' => $this->budget,
+            'box_office_id' => $this->revenue,
+            'ratings' => $movie['vote_average'],
+            'poster' => $movie['poster_path'],
+            'category_id' => $this->category,
             'release_year' => $movie['release_date'],
         ]);
     }
 
-    public function storeMovies($movie, $director, $budget, $revenue)
+    public function storeMovies($movieData)
     {   
-        if (!isset($movie)) {
+        if (!isset($movieData['movieObj'])) {
             Log::info('No movie were found');
             return [];
         }
 
-        $director = $this->storeDirector($director);
-        $budget = $this->storeBudget($budget);
-        $revenue = $this->storeBoxOffice($revenue);
+        $this->director = $this->storeDirector($movieData['director']);
+        $this->budget = $this->storeBudget($movieData['budget']);
+        $this->revenue = $this->storeBoxOffice($movieData['revenue']);
+        $this->category = $this->storeCategories($movieData['category']);
 
         # stores movies simultaneous 
-        return $this->storeMovie($movie, $director, $budget, $revenue);
+        return $this->storeMovie($movieData['movieObj']);
     }
 
 }

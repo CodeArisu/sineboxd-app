@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -16,7 +17,13 @@ class Actor extends Model
         'nationality'
     ];
 
-    public function cast(): BelongsToMany {
+    public function cast() : BelongsToMany 
+    {
         return $this->belongsToMany(Cast::class);
+    }
+
+    public function gender() : BelongsTo
+    {
+        return $this->belongsTo(Gender::class);
     }
 }

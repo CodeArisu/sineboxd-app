@@ -19,6 +19,12 @@ class Movie extends Model
         'budget_id',
         'box_office_id',
         'release_year',
+    ];
+
+    protected $hidden = [
+        'ratings',
+        'poster',
+        'created_at',
         'updated_at'
     ];
 
@@ -37,5 +43,9 @@ class Movie extends Model
     }
     public function cast() : hasOne {
         return $this->hasOne(Cast::class);
-    }         
+    }
+    public function category() : BelongsToMany {
+        return $this->belongsToMany(Category::class)
+        ->withTimestamps();
+    }
 }

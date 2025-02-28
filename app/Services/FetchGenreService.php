@@ -38,6 +38,7 @@ class FetchGenreService
             return $this->storeGenre($name);
         })->toArray();
 
+        // syncs the genre ids to the movie
         $newMovie->genre()->sync($genreIds);
     }
 }

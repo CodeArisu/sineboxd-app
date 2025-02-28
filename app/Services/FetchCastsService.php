@@ -9,13 +9,13 @@ use Illuminate\Support\Str;
 
 class FetchCastsService
 {
-    protected function checkActorArray($actors)
+    private function checkActorArray($actors)
     {
         // checks if the actors is an array
         return !empty($actors) || (is_array($actors) && count($actors) > 0) ? true : false;
     }
 
-    private function storeActor($movieActors)
+    private function storeMultipleActors($movieActors)
     {
         // stores to database
         return Actor::firstOrCreate([
@@ -24,7 +24,7 @@ class FetchCastsService
         ]);
     }
 
-    public function storeMultipleActors($actor)
+    private function storeActor($actor)
     {
         // checks if the actors is array
         if (!$this->checkActorArray($actor)) {
@@ -34,11 +34,23 @@ class FetchCastsService
         // stores the actor
         $storeActors = collect();
 
+        // loops through the actors then stores them each
         foreach ($actor as $movieActors) {
-            $storeActors->push($this->storeActor($movieActors));
+            $storeActors->push($this->storeMultipleActors($movieActors));
         }
 
         return $storeActors;
+    }
+
+    private function storeMultipleCasts($movie, $storedActors, $actorData) {
+        foreach ($storedActors as $index => $actors) {
+            Cast::firstOrCreate([
+                'movie_id' => $movie['id'],
+                'actor_id' => $actors['id'],
+                'character_name' => $actorData[$index]['character'] ?? 'Unknown',
+                'known_for' => $actorData['known_for'] ?? 'Unknown',
+            ]);
+        }
     }
 
     public function storeCast($movie, $actor)
@@ -49,18 +61,8 @@ class FetchCastsService
             return [];
         }
 
-        $storedActors = $this->storeMultipleActors($actor);
+        $storedActors = $this->storeActor($actor);
 
-        // limits the character
-        foreach ($storedActors as $index => $actors) {
-
-            Cast::create([
-                'movie_id' => $movie->id,
-                'actor_id' => $actors->id,
-                'character_name' => $actor[$index]['character'] ?? 'Unknown',
-                'role' => $actors->role ?? 'Actor',
-            ]);
-        }
-        
+        $this->storeMultipleCasts($movie, $storedActors, $actor);
     }
 }
