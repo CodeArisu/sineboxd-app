@@ -6,53 +6,57 @@ use App\Models\BoxOffice;
 use App\Models\Budget;
 use App\Models\Director;
 use App\Models\Movie;
+use Illuminate\Support\Facades\Log;
 
 class FetchMovieService 
 {   
-    protected $director;
-    protected $budget;
-    protected $boxOffice;
 
     public function storeDirector($crew)
     {   
         // only gets the directors name
         $director = collect($crew)->firstWhere('job', 'Director');
-        $this->director = Director::updateOrCreate([
+        return Director::firstOrCreate([
             'name' => $director['name']
-        ]);
+        ])->id;
     }
     public function storeBudget($budget)
     {   
-        $this->budget = Budget::create([
+        return Budget::create([
             'budget' => $budget
-        ]);
+        ])->id;
     }
     public function storeBoxOffice($revenue)
     {   
-        $this->boxOffice = BoxOffice::create([
+        return BoxOffice::create([
             'revenue' => $revenue
-        ]);
+        ])->id;
     }
 
-    public function storeMovie($movie) 
+    private function storeMovie($movie, $director, $budget, $revenue)
     {   
-        return Movie::updateOrCreate([
+        return Movie::firstOrCreate([
             'title' => $movie['title'],
             'description' => $movie['overview'],
-            'director_id' => $this->director->id,
-            'budget_id' => $this->budget->id,
-            'box_office_id' => $this->boxOffice->id,
+            'director_id' => $director,
+            'budget_id' => $budget,
+            'box_office_id' => $revenue,
             'release_year' => $movie['release_date'],
         ]);
     }
 
-    public function storeMultipleMovies($movies)
+    public function storeMovies($movie, $director, $budget, $revenue)
     {   
-        # stores movies simultaneous 
-        foreach ($movies as $movie)
-        {   
-            $this->storeMovie($movie);
+        if (!isset($movie)) {
+            Log::info('No movie were found');
+            return [];
         }
+
+        $director = $this->storeDirector($director);
+        $budget = $this->storeBudget($budget);
+        $revenue = $this->storeBoxOffice($revenue);
+
+        # stores movies simultaneous 
+        return $this->storeMovie($movie, $director, $budget, $revenue);
     }
 
 }

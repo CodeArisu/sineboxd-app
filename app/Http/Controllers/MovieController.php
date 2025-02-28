@@ -107,7 +107,6 @@ class MovieController extends Controller
                     ['name' => $actorData['actor_name']], // Ensure uniqueness
                     ['nationality' => $actorData['nationality'] ?? 'Unknown']
                 );
-
             $actors->push($actor); // Store all inserted/found actors
         }
 

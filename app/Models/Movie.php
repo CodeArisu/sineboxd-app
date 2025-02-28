@@ -35,8 +35,7 @@ class Movie extends Model
     public function boxOffice() : HasOne {
         return $this->hasOne(BoxOffice::class, 'id');
     }
-    public function cast() : HasOne {
-        return $this->hasOne(Cast::class)
-        ->withTimestamps();
-    }
+    public function cast() : hasOne {
+        return $this->hasOne(Cast::class);
+    }         
 }

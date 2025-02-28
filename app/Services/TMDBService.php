@@ -47,6 +47,15 @@ class TMDBService
         return $response;
     }
 
+    public function fetchMovieByPerson($id) {
+        // movie id with actor endpoint
+        $apiUrl = "{$this->baseUrl}person/{$id}";
+        $response = Http::get($apiUrl, [
+            'api_key' => $this->apiKey,
+        ]);
+        return $response;
+    }
+
     public function fetchLatestMovies() 
     {   
         // API url endpoint
