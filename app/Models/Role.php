@@ -15,8 +15,7 @@ class Role extends Model
     ];
 
     // Role table belongs to User table
-    public function users(): BelongsTo
-    {
+    public function users(): BelongsTo {
         return $this->belongsTo(User::class);
     }  
 }
