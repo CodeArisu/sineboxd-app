@@ -14,7 +14,13 @@ class Actor extends Model
 
     protected $fillable = [
         'name',
-        'nationality'
+        'nationality',
+        'gender_id',
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at'
     ];
 
     public function cast() : BelongsToMany 

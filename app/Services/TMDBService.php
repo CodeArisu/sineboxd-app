@@ -29,9 +29,9 @@ class TMDBService
         return $response;
     }
 
-    public function fetchMoviesByDetails($endpoint, $id) {
+    public function fetchMoviesByDetails($id) {
         // movie id with endpoint
-        $apiUrl = "{$this->baseUrl}movie/{$id}/{$endpoint}";
+        $apiUrl = "{$this->baseUrl}movie/{$id}/credits";
         $response = Http::get($apiUrl, [
             'api_key' => $this->apiKey,
         ]);
@@ -58,7 +58,7 @@ class TMDBService
 
     public function fetchMovies($endpoint)
     {
-        $response = Http::get("{$this->baseUrl}" . $endpoint, [
+        $response = Http::get("{$this->baseUrl}{$endpoint}", [
             'api_key' => $this->apiKey,
             'language' => $this->en_lang,
         ]);

@@ -70,7 +70,6 @@ class FetchMovieService
         $this->revenue = $this->storeBoxOffice($movieData['revenue']);
         $this->category = $this->storeCategories($movieData['category']);
 
-        # stores movies simultaneous 
         return $this->storeMovie($movieData['movieObj']);
     }
 

@@ -26,13 +26,11 @@ abstract class FetchFromAPI extends Command
     }
 
     public function handle()
-    {
+    {   
         if (!$this->category || !$this->endpoint) {
             $this->error('Endpoint and Category is required!');
             return;
         }
-
-        dd($this->endpoint, $this->category);
 
         $this->info("Fetching {$this->category} from TMDB API!");
         // checks response from TMDB service
@@ -40,7 +38,7 @@ abstract class FetchFromAPI extends Command
 
         $this->failedResponse($response, $this->category);
         // store files as json
-        $extractedData = $response->json()['results'] ?? [];
+        $extractedData = $response->json() ?? [];
         $totalPages = $extractedData['total_pages'] ?? 0;
 
         if ($totalPages === 0) {
@@ -56,7 +54,7 @@ abstract class FetchFromAPI extends Command
             $progressBar->advance();
             // collects pages on latest endpoint
             $response = $this->tmdbService->fetchMoviesByPages($this->endpoint, $page);
-            $this->failedResponse($response, 'latest movies');
+            $this->failedResponse($response, $this->category);
             // stores movies results as json
             $movies = $response->json()['results'] ?? [];
 
@@ -73,7 +71,7 @@ abstract class FetchFromAPI extends Command
                 }
 
                 // extracts movie credits
-                $movieCreditResponse = $this->tmdbService->fetchMoviesByDetails($this->endpoint, $movie['id']);
+                $movieCreditResponse = $this->tmdbService->fetchMoviesByDetails($movie['id']);
                 $this->failedResponse($movieCreditResponse, 'movie credits');
 
                 // extracts movie details
@@ -92,15 +90,15 @@ abstract class FetchFromAPI extends Command
                     'director' => $movieCredit['crew'] ?? [],
                     'budget' => $movieDetail['budget'] ?? null,
                     'revenue' => $movieDetail['revenue'] ?? null,
-                    'category' => $this->category // endpoint
+                    'category' => $this->category // endpoint category
                 ];
 
                 // returns added movies
-                $newMovie = $this->movieService->storeMovies($movieData);
+                $storedMovie = $this->movieService->storeMovies($movieData);
                 // stores genre
-                $this->genreService->storeMultipleGenre($newMovie, $genre);
+                $this->genreService->storeMultipleGenre($storedMovie, $genre);
                 // stores casts
-                $this->castService->storeCast($newMovie, $actor);
+                $this->castService->storeCast($storedMovie, $actor);
             }
             
             $movieProgressBar->finish(); // Finish the movie progress bar

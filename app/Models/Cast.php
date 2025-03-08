@@ -11,7 +11,7 @@ class Cast extends Model
     protected $table = 'cast_movie';
     protected $primaryKey = 'id';
 
-    protected $hidden = [
+    protected $fillable = [
         'actor_id',
         'movie_id',
         'known_for',

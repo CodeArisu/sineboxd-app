@@ -18,12 +18,13 @@ class Movie extends Model
         'director_id',
         'budget_id',
         'box_office_id',
+        'ratings',
+        'poster',
+        'category_id',
         'release_year',
     ];
 
     protected $hidden = [
-        'ratings',
-        'poster',
         'created_at',
         'updated_at'
     ];
