@@ -19,7 +19,8 @@ class FetchCastsService
 
     private function storeMultipleActors($actor)
     {    
-        $genderId = $this->storeGenders($actor['gender']); // locate gender not as id's
+        // locate gender not as id's
+        $genderId = $this->storeGenders($actor['gender']); 
         // stores to database
         return Actor::firstOrCreate([
             'name' => $actor['name'],
@@ -48,6 +49,10 @@ class FetchCastsService
     }
 
     private function storeMultipleCasts($actorData) {
+        // the casts is stored here indexing each movies
+        // that has actors with character and known for department
+        // attributes, for every loop the data from actor object
+        // is distributed with index for actor id array saving
         foreach ($actorData['actorObj'] as $index => $actors) {
             Cast::firstOrCreate([
                 'movie_id' => $actorData['movieObj']['id'],
@@ -60,6 +65,7 @@ class FetchCastsService
 
     private function storeGenders($gender)
     {   
+        // maps in accordance with the id as index
         $genderMapping = [
             1 => 'Female',
             2 => 'Male',
@@ -71,6 +77,8 @@ class FetchCastsService
             return null;
         }
 
+        // making sure that the gender id is mapped with constraint
+        // of "Not Specified" to allow more than 2 id's
         $genderLabel = $genderMapping[$gender] ?? 'Not Specified';
 
         return Gender::firstOrCreate([

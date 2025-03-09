@@ -147,6 +147,7 @@ class MovieController extends Controller
             'box_office_id' => $fetch_box_office->id,
             'release_year' => $fetch_release,
         ]);
+        
         return $movie;
     }
 

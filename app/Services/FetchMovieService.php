@@ -45,6 +45,7 @@ class FetchMovieService
 
     private function storeMovie($movie)
     {   
+        // movies are directly stored
         return Movie::firstOrCreate([
             'title' => $movie['title'],
             'description' => $movie['overview'],
@@ -65,6 +66,7 @@ class FetchMovieService
             return [];
         }
 
+        // stores each table individually and returns id
         $this->director = $this->storeDirector($movieData['director']);
         $this->budget = $this->storeBudget($movieData['budget']);
         $this->revenue = $this->storeBoxOffice($movieData['revenue']);
@@ -73,4 +75,10 @@ class FetchMovieService
         return $this->storeMovie($movieData['movieObj']);
     }
 
+    private function checkQueries($object) {
+        if (!isset($object)) {
+            Log::info("No {$object} were found");
+            return null;
+        }
+    }
 }
