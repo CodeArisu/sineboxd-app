@@ -13,6 +13,8 @@ abstract class FetchFromAPI extends Command
     protected string $endpoint;
     protected string $category;
 
+    protected $description;
+
     protected $tmdbService;
     protected $movieService, $genreService, $castService;
 
@@ -32,7 +34,7 @@ abstract class FetchFromAPI extends Command
             return;
         }
 
-        $this->info("Fetching {$this->category} from TMDB API!");
+        $this->info($this->description);
         // checks response from TMDB service
         $response = $this->tmdbService->fetchMovies($this->endpoint);
 
@@ -42,8 +44,7 @@ abstract class FetchFromAPI extends Command
         $totalPages = $extractedData['total_pages'] ?? 0;
 
         if ($totalPages === 0) {
-            $this->error("failed to fetch {$this->category} movies from TMDB API!.");
-            return;
+            return $this->error("failed to fetch {$this->category} movies from TMDB API!.");
         }
 
         $this->info("Found total of {$totalPages} pages");
@@ -54,63 +55,74 @@ abstract class FetchFromAPI extends Command
             $progressBar->advance();
             // collects pages on latest endpoint
             $response = $this->tmdbService->fetchMoviesByPages($this->endpoint, $page);
-            $this->failedResponse($response, $this->category);
+            if ($this->failedResponse($response, $this->category)) return;
             // stores movies results as json
             $movies = $response->json()['results'] ?? [];
-
-            $this->newLine();
-            $movieProgressBar = $this->output->createProgressBar(count($movies));
-            $movieProgressBar->start();
-
-            foreach ($movies as $movie) {
-                $movieProgressBar->advance(); // Track movie progress
-                // checks if there is movie to be found
-                if(!$movie) {
-                    $this->error("No movies found.");
-                    return;
-                }
-
-                // extracts movie credits
-                $movieCreditResponse = $this->tmdbService->fetchMoviesByDetails($movie['id']);
-                $this->failedResponse($movieCreditResponse, 'movie credits');
-
-                // extracts movie details
-                $movieDetailResponse = $this->tmdbService->fetchMoviesById($movie['id']);
-                $this->failedResponse($movieDetailResponse, 'movie details');
-
-                // extract relevant data
-                $movieCredit = $movieCreditResponse->json();
-                $movieDetail = $movieDetailResponse->json();
-
-                $actor = $movieCredit['cast'] ?? [];
-                $genre = $movieDetail['genres'] ?? [];
-                
-                $movieData = [
-                    'movieObj' => $movie,
-                    'director' => $movieCredit['crew'] ?? [],
-                    'budget' => $movieDetail['budget'] ?? null,
-                    'revenue' => $movieDetail['revenue'] ?? null,
-                    'category' => $this->category // endpoint category
-                ];
-
-                // returns added movies
-                $storedMovie = $this->movieService->storeMovies($movieData);
-                // stores genre
-                $this->genreService->storeMultipleGenre($storedMovie, $genre);
-                // stores casts
-                $this->castService->storeCast($storedMovie, $actor);
+            if (empty($movies)) {
+                return $this->error("No movies found on page {$page}.");
             }
-            
-            $movieProgressBar->finish(); // Finish the movie progress bar
-            $this->newLine();
+
+            $this->processMovies($movies);
             $this->info("Movies added on {$page} successfully!");
         }
+        $progressBar->finish();
     }
 
-    private function failedResponse($obj, $name) {
+    private function processMovies(array $movies) : void 
+    {
+        $movieProgressBar = $this->output->createProgressBar(count($movies));
+        $movieProgressBar->start();
+
+        foreach($movies as $movie) {
+            $movieProgressBar->advance();
+            $this->processMovie($movie);
+        }
+        
+        $movieProgressBar->finish();
+        $this->newLine();
+    }
+
+    private function processMovie(array $movie) : void 
+    {
+        [$movieCredit, $movieDetail] = $this->movieDetails($movie['id']);
+        if (!$movieCredit || !$movieDetail) return;
+        
+        $movieData = [
+            'movieObj' => $movie,
+            'director' => $movieCredit['crew'] ?? [],
+            'budget' => $movieDetail['budget'] ?? null,
+            'revenue' => $movieDetail['revenue'] ?? null,
+            'category' => $this->category // endpoint category
+        ];
+
+        // returns added movies
+        $storedMovie = $this->movieService->storeMovies($movieData);
+        // stores genre
+        $this->genreService->storeMultipleGenre($storedMovie, $movieDetail['genres'] ?? []);
+        // stores casts
+        $this->castService->storeCast($storedMovie, $movieCredit['cast'] ?? []);
+    }
+
+    private function movieDetails(int $movieId) : array 
+    {
+        // extracts movie credits
+        $movieCreditResponse = $this->tmdbService->fetchMoviesByDetails($movieId);
+        if ($this->failedResponse($movieCreditResponse, 'movie credits')) return [null, null];
+
+        // extracts movie details
+        $movieDetailResponse = $this->tmdbService->fetchMoviesById($movieId);
+        if ($this->failedResponse($movieCreditResponse, 'movie details')) return [null, null];
+
+        return [$movieCreditResponse->json(), $movieDetailResponse->json()];
+    }
+
+    private function failedResponse($obj, $name) 
+    {
         if ($obj->failed()) {
             $this->error("failed to fetch {$name} movies from TMDB API!.");
-            return Command::FAILURE;
+            Command::FAILURE;
+            return true;
         }
+        return false;
     }
 }

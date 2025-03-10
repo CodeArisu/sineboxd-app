@@ -7,11 +7,11 @@ use App\Models\Budget;
 use App\Models\Category;
 use App\Models\Director;
 use App\Models\Movie;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class FetchMovieService 
-{      
-
+{   
     private $category;
     private $director, $budget, $revenue;
 
@@ -43,8 +43,32 @@ class FetchMovieService
         ])->id;
     }
 
+    private function distributeId($movieData) {
+        // this functions maps out individual functions that returns each
+        // corresponding id's
+        try {
+            // Start database transaction
+            DB::beginTransaction();
+
+            $this->director = $this->storeDirector($movieData['director']);
+            $this->budget = $this->storeBudget($movieData['budget']);
+            $this->revenue = $this->storeBoxOffice($movieData['revenue']);
+            $this->category = $this->storeCategories($movieData['category']);
+
+            DB::commit(); // Commit transaction if all succeed
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback on failure
+            Log::error("Transaction failed: " . $e->getMessage());
+            throw new \Exception("Failed to store movie details");
+        }
+    }
+
     private function storeMovie($movie)
     {   
+        if (empty($movie)) {
+            Log::error("No movie is Found!");
+            return [];
+        }
         // movies are directly stored
         return Movie::firstOrCreate([
             'title' => $movie['title'],
@@ -62,23 +86,11 @@ class FetchMovieService
     public function storeMovies($movieData)
     {   
         if (!isset($movieData['movieObj'])) {
-            Log::info('No movie were found');
+            Log::error('No Object Found');
             return [];
         }
 
-        // stores each table individually and returns id
-        $this->director = $this->storeDirector($movieData['director']);
-        $this->budget = $this->storeBudget($movieData['budget']);
-        $this->revenue = $this->storeBoxOffice($movieData['revenue']);
-        $this->category = $this->storeCategories($movieData['category']);
-
+        $this->distributeId($movieData);
         return $this->storeMovie($movieData['movieObj']);
-    }
-
-    private function checkQueries($object) {
-        if (!isset($object)) {
-            Log::info("No {$object} were found");
-            return null;
-        }
     }
 }

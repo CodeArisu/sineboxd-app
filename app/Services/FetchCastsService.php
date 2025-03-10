@@ -5,12 +5,11 @@ namespace App\services;
 use App\Models\Actor;
 use App\Models\Cast;
 use App\Models\Gender;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class FetchCastsService
 {   
-    private $storedActors;
-
     private function checkActorArray($actors)
     {
         // checks if the actors is an array
@@ -33,8 +32,8 @@ class FetchCastsService
     {
         // checks if the actors is array
         if (!$this->checkActorArray($actor)) {
-            Log::info('No actors were found');
-            return [];
+            Log::error('No actors were found');
+            return collect();
         }
 
         // stores the actor
@@ -49,6 +48,10 @@ class FetchCastsService
     }
 
     private function storeMultipleCasts($actorData) {
+        if (empty($actorData)) {
+            Log::error('No gender Found!');
+            return [];
+        }
         // the casts is stored here indexing each movies
         // that has actors with character and known for department
         // attributes, for every loop the data from actor object
@@ -73,7 +76,7 @@ class FetchCastsService
         ];
 
         if (!isset($gender)) {
-            Log::info('No gender Found!');
+            Log::error('No gender Found!');
             return null;
         }
 
@@ -90,16 +93,26 @@ class FetchCastsService
     {
         // checks if the actor is null
         if (!isset($movie) && !isset($actor)) {
-            Log::info('No movies and actors were found');
+            Log::error('No movies and actors were found');
             return [];
         }
 
-        $actorData = [
-            'actorObj' => $actor, # raw data of actors
-            'movieObj' => $movie, # stored movie data with new id's
-            'storedActor' => $this->storeActor($actor), # stored data with new id's
-        ];
+        try {
+            DB::beginTransaction();
 
-        $this->storeMultipleCasts($actorData);
+            $actorData = [
+                'actorObj' => $actor, # raw data of actors
+                'movieObj' => $movie, # stored movie data with new id's
+                'storedActor' => $this->storeActor($actor), # stored data with new id's
+            ];
+
+            $this->storeMultipleCasts($actorData);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error("Transaction failed: " . $e->getMessage());
+            throw new \Exception("Failed to store cast data");
+        }
     }
 }
