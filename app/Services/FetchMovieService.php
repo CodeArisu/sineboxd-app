@@ -44,12 +44,12 @@ class FetchMovieService
     }
 
     private function distributeId($movieData) {
-        // this functions maps out individual functions that returns each
-        // corresponding id's
         try {
             // Start database transaction
             DB::beginTransaction();
-
+            
+            // this functions maps out individual functions that returns each
+            // corresponding id's
             $this->director = $this->storeDirector($movieData['director']);
             $this->budget = $this->storeBudget($movieData['budget']);
             $this->revenue = $this->storeBoxOffice($movieData['revenue']);
@@ -72,12 +72,12 @@ class FetchMovieService
         // movies are directly stored
         return Movie::firstOrCreate([
             'title' => $movie['title'],
-            'description' => $movie['overview'],
+            'description' => $movie['overview'] ?? 'no description',
             'director_id' => $this->director,
             'budget_id' => $this->budget,
             'box_office_id' => $this->revenue,
             'ratings' => $movie['vote_average'],
-            'poster' => $movie['poster_path'],
+            'poster' => $movie['poster_path'] ?? 'no poster',
             'category_id' => $this->category,
             'release_year' => $movie['release_date'],
         ]);

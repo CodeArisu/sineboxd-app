@@ -12,6 +12,7 @@ abstract class FetchFromAPI extends Command
 {
     protected string $endpoint;
     protected string $category;
+    protected int $page;
 
     protected $description;
 
@@ -28,7 +29,7 @@ abstract class FetchFromAPI extends Command
     }
 
     public function handle()
-    {   
+    {
         if (!$this->category || !$this->endpoint) {
             $this->error('Endpoint and Category is required!');
             return;
@@ -41,7 +42,8 @@ abstract class FetchFromAPI extends Command
         $this->failedResponse($response, $this->category);
         // store files as json
         $extractedData = $response->json() ?? [];
-        $totalPages = $extractedData['total_pages'] ?? 0;
+
+        $totalPages = isset($this->page) ? $this->page : $extractedData['total_pages'];
 
         if ($totalPages === 0) {
             return $this->error("failed to fetch {$this->category} movies from TMDB API!.");
@@ -55,7 +57,9 @@ abstract class FetchFromAPI extends Command
             $progressBar->advance();
             // collects pages on latest endpoint
             $response = $this->tmdbService->fetchMoviesByPages($this->endpoint, $page);
-            if ($this->failedResponse($response, $this->category)) return;
+            if ($this->failedResponse($response, $this->category)) {
+                return;
+            }
             // stores movies results as json
             $movies = $response->json()['results'] ?? [];
             if (empty($movies)) {
@@ -68,31 +72,33 @@ abstract class FetchFromAPI extends Command
         $progressBar->finish();
     }
 
-    private function processMovies(array $movies) : void 
+    private function processMovies(array $movies): void
     {
         $movieProgressBar = $this->output->createProgressBar(count($movies));
         $movieProgressBar->start();
 
-        foreach($movies as $movie) {
+        foreach ($movies as $movie) {
             $movieProgressBar->advance();
             $this->processMovie($movie);
         }
-        
+
         $movieProgressBar->finish();
         $this->newLine();
     }
 
-    private function processMovie(array $movie) : void 
+    private function processMovie(array $movie): void
     {
         [$movieCredit, $movieDetail] = $this->movieDetails($movie['id']);
-        if (!$movieCredit || !$movieDetail) return;
-        
+        if (!$movieCredit || !$movieDetail) {
+            return;
+        }
+
         $movieData = [
             'movieObj' => $movie,
             'director' => $movieCredit['crew'] ?? [],
             'budget' => $movieDetail['budget'] ?? null,
             'revenue' => $movieDetail['revenue'] ?? null,
-            'category' => $this->category // endpoint category
+            'category' => $this->category, // endpoint category
         ];
 
         // returns added movies
@@ -103,20 +109,24 @@ abstract class FetchFromAPI extends Command
         $this->castService->storeCast($storedMovie, $movieCredit['cast'] ?? []);
     }
 
-    private function movieDetails(int $movieId) : array 
+    private function movieDetails(int $movieId): array
     {
         // extracts movie credits
         $movieCreditResponse = $this->tmdbService->fetchMoviesByDetails($movieId);
-        if ($this->failedResponse($movieCreditResponse, 'movie credits')) return [null, null];
+        if ($this->failedResponse($movieCreditResponse, 'movie credits')) {
+            return [null, null];
+        }
 
         // extracts movie details
         $movieDetailResponse = $this->tmdbService->fetchMoviesById($movieId);
-        if ($this->failedResponse($movieCreditResponse, 'movie details')) return [null, null];
+        if ($this->failedResponse($movieCreditResponse, 'movie details')) {
+            return [null, null];
+        }
 
         return [$movieCreditResponse->json(), $movieDetailResponse->json()];
     }
 
-    private function failedResponse($obj, $name) 
+    private function failedResponse($obj, $name) : bool
     {
         if ($obj->failed()) {
             $this->error("failed to fetch {$name} movies from TMDB API!.");

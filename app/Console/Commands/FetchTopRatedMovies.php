@@ -22,4 +22,5 @@ class FetchTopRatedMovies extends FetchFromAPI
 
     protected string $endpoint = 'movie/top_rated';
     protected string $category = 'rated';
+    protected int $page = 3;
 }

@@ -20,4 +20,5 @@ class FetchUpcomingMovies extends FetchFromAPI
 
     protected string $endpoint = 'movie/upcoming';
     protected string $category = 'upcoming';
+    protected int $page = 3;
 }

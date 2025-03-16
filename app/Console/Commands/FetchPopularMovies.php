@@ -20,4 +20,5 @@ class FetchPopularMovies extends FetchFromAPI
 
     protected string $endpoint = 'movie/popular';
     protected string $category = 'popular';
+    protected int $page = 3;
 }

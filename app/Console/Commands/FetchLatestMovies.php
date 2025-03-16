@@ -9,7 +9,7 @@ class FetchLatestMovies extends FetchFromAPI
      *
      * @var string
      */
-    protected $signature = 'fetch:latest-movies';
+    protected $signature = 'fetch:latest-movies {--pages= : input number of pages}';
 
     /**
      * The console command description.
@@ -20,4 +20,5 @@ class FetchLatestMovies extends FetchFromAPI
 
     protected string $endpoint = 'movie/now_playing';
     protected string $category = 'latest';
+    protected int $page = 3;
 }
