@@ -23,7 +23,6 @@
     @stack('styles')
 
 </head>
-
     <body>
             {{-- 
             -- Where html contents are being applied
@@ -35,5 +34,4 @@
         applies js to a certain blade file without interruptions
     --}}
     @stack('scripts')
-    
 </html>
