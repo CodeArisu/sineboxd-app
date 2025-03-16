@@ -9,16 +9,15 @@ class FetchPopularMovies extends FetchFromAPI
      *
      * @var string
      */
-    protected $signature = 'fetch:popular-movies';
+    protected $signature = 'fetch:popular-movies {--pages=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Fetch popular Movies from TMDB and store in Database';
+    protected $description = 'Fetch Popular Movies from TMDB and store in Database';
 
     protected string $endpoint = 'movie/popular';
     protected string $category = 'popular';
-    protected int $page = 3;
 }

@@ -12,8 +12,6 @@ abstract class FetchFromAPI extends Command
 {
     protected string $endpoint;
     protected string $category;
-    protected int $page;
-
     protected $description;
 
     protected $tmdbService;
@@ -42,8 +40,8 @@ abstract class FetchFromAPI extends Command
         $this->failedResponse($response, $this->category);
         // store files as json
         $extractedData = $response->json() ?? [];
-
-        $totalPages = isset($this->page) ? $this->page : $extractedData['total_pages'];
+        
+        $totalPages = $this->option('pages') !== null ? (int)$this->option('pages') : $extractedData['total_pages'];
 
         if ($totalPages === 0) {
             return $this->error("failed to fetch {$this->category} movies from TMDB API!.");
