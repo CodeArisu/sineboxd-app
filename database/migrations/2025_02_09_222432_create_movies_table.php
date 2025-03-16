@@ -46,7 +46,7 @@ return new class extends Migration
             ->constrained('genders')
             ->onDelete('cascade');
 
-            $table->string('nationality')->nullable();
+            $table->string('profile')->nullable();
             $table->timestamps();
         });
 

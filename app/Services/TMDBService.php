@@ -29,27 +29,11 @@ class TMDBService
         return $response;
     }
 
-    public function fetchMoviesByDetails($id) {
+    public function fetchMoviesByDetails($id, $isDetails) {
+
+        $endpoint = $isDetails ? "movie/{$id}/credits" : "movie/{$id}";
         // movie id with endpoint
-        $apiUrl = "{$this->baseUrl}movie/{$id}/credits";
-        $response = Http::get($apiUrl, [
-            'api_key' => $this->apiKey,
-        ]);
-        return $response;
-    }
-
-    public function fetchMoviesById($id) {
-        // movie id endpoint
-        $apiUrl = "{$this->baseUrl}movie/{$id}";
-        $response = Http::get($apiUrl, [
-            'api_key' => $this->apiKey,
-        ]);
-        return $response;
-    }
-
-    public function fetchMovieByPerson($id) {
-        // movie id with actor endpoint
-        $apiUrl = "{$this->baseUrl}person/{$id}";
+        $apiUrl = "{$this->baseUrl}" . $endpoint;
         $response = Http::get($apiUrl, [
             'api_key' => $this->apiKey,
         ]);
