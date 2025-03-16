@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\page;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cast;
+use App\Models\Genre;
 use App\Models\Movie;
 use Illuminate\Http\Request;
 
@@ -10,7 +12,10 @@ class landingController extends Controller
 {
     public function index()
     {   
-        return view('page.landing');
+        $movies = Movie::all();
+        $genres = Genre::all();
+
+        return view('page.landing', compact('movies', 'genres'));
     }
 
     /**
