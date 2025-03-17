@@ -26,10 +26,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // Route::put('/movie/update/{movie}', [App\Http\Controllers\MovieController::class, 'update'])->name('update-movie');
 
     // inserts new comments
-    Route::post('/movie/{movie}/comment', [App\Http\Controllers\CommentController::class, 'storeComment'])->name('create-comment');
+    // Route::post('/movie/{movie}/comment', [App\Http\Controllers\CommentController::class, 'storeComment'])->name('create-comment');
     // deletes new comment
     Route::delete('/movie/{movie}/comment/{comments}', [App\Http\Controllers\CommentController::class, 'deleteComment'])->name('remove-comment');
 });
-
-Route::get('/movie/detail/{movie}', [App\Http\Controllers\MovieController::class, 'show'])->name('movie-detail');
-Route::post('/movie/detail/{movie}/comment', [App\Http\Controllers\CommentController::class, 'storeComment'])->name('movie-comment');

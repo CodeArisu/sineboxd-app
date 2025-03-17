@@ -11,9 +11,9 @@ class ReviewEditor extends Component
 {
     public $movie;
 
-    public function __construct(Movie $movie)
-    {
-        $this->$movie = $movie;
+    public function __construct($movie)
+    {   
+        $this->movie = $movie;
     }
 
     /**

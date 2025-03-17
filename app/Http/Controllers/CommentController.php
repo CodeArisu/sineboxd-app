@@ -25,16 +25,8 @@ class CommentController extends Controller
             'parent_id' => 'nullable|int'
         ]);
 
-        if ($validated->fails()) {
-            return response()->json(
-                [
-                    'error' => 'fails to validate comment'
-                ], 401
-            );
-        }
-
         Comments::create([
-            'user_id' => auth()->user()->id,
+            'user_id' => 2,
             'movie_id' => $movie->id,
             'parent_id' => $request->parent_id,
             'content' => $request->content

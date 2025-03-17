@@ -23,7 +23,7 @@
 <!-- Movie Details Section with Overlapping Effect -->
 <div class="container relative -mt-32 z-10">
     <div class="flex flex-col md:flex-row gap-4">
-        <div class="shadow-lg rounded-lg overflow-hidden">
+        <div class="relative rounded-lg overflow-hidden shadow-md before:absolute before:inset-0 before:bg-black/5 before:rounded-lg">
             <x-movie-card poster="https://www.themoviedb.org/t/p/w220_and_h330_face{{ $movie->poster }}" alt="Poster" />
         </div>
         <div class="md:w-2/3">
@@ -32,7 +32,7 @@
                 <p class="text-gray-300 mr-4">{{ $year }}</p>
                 <p class="text-gray-300 mr-4">{{ $movie->director->name ?? 'unknown' }}</p>
             </div>
-            <p class="text-gray-300 mb-4">Duration: 2h 30m</p>
+            <p class="text-gray-300 mb-4">Duration: {{ floor($movie->runtime / 60) }}h {{ $movie->runtime % 60 }}m</p>
                 <div class="flex items-center text-gray-300 mb-4">
                     <span class="font-semibold mr-2">Genre:</span>
                     <ul class="flex flex-wrap space-x-2">
@@ -109,13 +109,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
 </div>
 
 <div class="mt-20">
@@ -140,19 +133,56 @@
     </div>
 </div>
 
-<div class="mt-20 ">
+<div class="mt-20 mb-20">
     <h1 class="text-2xl font-bold mr-4">Reviews</h1>
     <div class="container mx-auto relative mt-4">
-        <x-review-editor :movie="$movie" />
 
-        <x-review-card
-            username="prim"
-            review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et"
-            rating="4"
-            likes="125"
-            comments="5"
-            profileImage="{{ asset('storage/profile.jpg') }}" 
-        />
+        <x-review-editor :movie="$movie"/>
+        
+        @foreach($comments as $comment)
+    <!-- Main Comment -->
+            <x-review-card
+                :username="$comment->user->name"
+                :review="$comment->content"
+                rating="4"
+                likes="0"
+                comments="{{ count($comment->replies) }}"
+                profileImage="{{ asset('storage/profile.jpg') }}" 
+            />
+
+            <!-- Reply Button & Hidden Reply Form -->
+            <div class="ml-8" x-data="{ showReply: false }">
+                <button @click="showReply = !showReply" class="mt-2 text-yellow-400 hover:underline">
+                    Reply
+                </button>
+
+                <form x-show="showReply" x-cloak action="{{ route('create-comment', ['movie' => $movie->id]) }}" method="POST" class="mt-3">
+                    @csrf
+                    <input type="hidden" name='parent_id' value="{{ $comment->id }}">
+                    <textarea rows="5" placeholder="Reply"
+                        class="w-full p-3 rounded-lg bg-[#222222] text-white focus:outline-none focus:ring-2 focus:ring-yellow-400" 
+                        name='content' required>
+                    </textarea>
+                    <button class="mt-3 px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg hover:bg-yellow-500 transition">
+                        Submit Reply
+                    </button>
+                </form>
+            </div>
+
+            <!-- Replies Section -->
+            @foreach ($comment->replies as $reply)
+                <div class="ml-12 border-l-2 border-gray-700 pl-4">
+                    <x-review-card
+                        :username="$reply->user->name"
+                        :review="$reply->content"
+                        rating="4"
+                        likes="0"
+                        comments="0"
+                        profileImage="{{ asset('storage/profile.jpg') }}" 
+                    />
+                </div>
+            @endforeach
+        @endforeach
 
         {{-- <x-review-card
             username="prim"

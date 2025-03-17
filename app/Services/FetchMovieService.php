@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 class FetchMovieService 
 {   
     private $category;
-    private $director, $budget, $revenue;
+    private $director, $budget, $revenue, $runtime;
 
     private function storeCategories($category)
     {   
@@ -51,9 +51,10 @@ class FetchMovieService
             // this functions maps out individual functions that returns each
             // corresponding id's
             $this->director = $this->storeDirector($movieData['director']);
-            $this->budget = $this->storeBudget($movieData['budget']);
-            $this->revenue = $this->storeBoxOffice($movieData['revenue']);
+            $this->budget = $this->storeBudget($movieData['detail']['budget']);
+            $this->revenue = $this->storeBoxOffice($movieData['detail']['revenue']);
             $this->category = $this->storeCategories($movieData['category']);
+            $this->runtime = $movieData['detail']['runtime'];
 
             DB::commit(); // Commit transaction if all succeed
         } catch (\Exception $e) {
@@ -80,7 +81,7 @@ class FetchMovieService
             'poster' => $movie['poster_path'] ?? 'no poster',
             'backdrop' => $movie['backdrop_path'] ?? 'no backdrop',
             'category_id' => $this->category,
-            'runtime' => $movie['runtime'] ?? 0,
+            'runtime' => $this->runtime ?? 0,
             'release_year' => $movie['release_date'],
         ]);
     }
