@@ -29,11 +29,13 @@
 
 </head>
 
+
 <body class="bg-[#222222] text-white mx-40  ">
    
         {{--
         -- Where html contents are being applied
         --}}
+
         @yield('content')
 
 
@@ -44,8 +46,10 @@
 {{--
         applies js to a certain blade file without interruptions
     --}}
+
 @stack('scripts')
 
 <script src="//unpkg.com/alpinejs" defer></script>
+
 
 </html>
