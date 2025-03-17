@@ -15,7 +15,7 @@ class landingController extends Controller
         $movies = Movie::all();
         $genres = Genre::all();
 
-        return view('page.landing', compact('movies', 'genres'));
+        return view('index', compact('movies', 'genres'));
     }
 
     /**

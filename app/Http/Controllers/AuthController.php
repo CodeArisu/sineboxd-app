@@ -42,10 +42,10 @@ class AuthController extends Controller
             $role = Role::where('role', 'user')->first();
             
             // creates a new user with the validated data
-            $user = User::create([
-                'name' => $request['name'],
-                'email' => $request['email'],
-                'password' => Hash::make($request['password']),
+            $user = User::firstOrCreate([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
                 'role_id' => $role->id,
             ]);
 
@@ -92,7 +92,6 @@ class AuthController extends Controller
         try {
             // checks if the user exists
             $credentials = ['email' => $request->email, 'password' => $request->password];
-
             // returns an error message if the user does not exist
             if (!auth()->attempt($credentials)) {
                 return response()->json([
@@ -100,7 +99,7 @@ class AuthController extends Controller
                 ], 403);
             }
 
-            // gets the user
+            // gets the user if existed
             $user = User::where('email', $credentials['email'])->firstOrFail();
 
             // logs the login event
