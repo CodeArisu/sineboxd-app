@@ -10,7 +10,7 @@ class Role extends Model
     protected $primaryKey = 'id';
 
     // allows fillable role column
-    protected $fillable = [
+    protected $hidden = [
         'role'
     ];
 

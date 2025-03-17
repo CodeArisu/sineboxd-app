@@ -14,7 +14,7 @@ class Cast extends Model
     protected $fillable = [
         'actor_id',
         'movie_id',
-        'role',
+        'known_for',
         'character_name'
     ];
 

@@ -107,7 +107,6 @@ class MovieController extends Controller
                     ['name' => $actorData['actor_name']], // Ensure uniqueness
                     ['nationality' => $actorData['nationality'] ?? 'Unknown']
                 );
-
             $actors->push($actor); // Store all inserted/found actors
         }
 
@@ -121,7 +120,7 @@ class MovieController extends Controller
     }
 
     // queries movies
-    protected function insert_movie($request)
+    public function insert_movie($request)
     {
         // validates date or return default format
         $fetch_release = $request->release_year 
@@ -148,7 +147,7 @@ class MovieController extends Controller
             'box_office_id' => $fetch_box_office->id,
             'release_year' => $fetch_release,
         ]);
-
+        
         return $movie;
     }
 
