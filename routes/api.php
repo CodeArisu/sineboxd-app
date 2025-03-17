@@ -31,4 +31,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('/movie/{movie}/comment/{comments}', [App\Http\Controllers\CommentController::class, 'deleteComment'])->name('remove-comment');
 });
 
-Route::get('/movie/detail', [App\Http\Controllers\MovieController::class, 'index'])->name('movie-detail');
+Route::get('/movie/detail/{movie}', [App\Http\Controllers\MovieController::class, 'show'])->name('movie-detail');
+Route::post('/movie/detail/{movie}/comment', [App\Http\Controllers\CommentController::class, 'storeComment'])->name('movie-comment');

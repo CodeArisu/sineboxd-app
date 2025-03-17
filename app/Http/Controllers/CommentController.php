@@ -40,13 +40,11 @@ class CommentController extends Controller
             'content' => $request->content
         ]);
 
-        return response()->json(
-            [   
-                'user_id' => auth()->user()->id,
-                'movie_id' => $movie->id,
-                'content' => $request->content
-            ], 200
-        );
+        return back()->with('success', 'Comment Added');
+    }
+
+    public function show(Movie $movie) {
+        
     }
 
     public function deleteComment(Comments $comments) 

@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="relative left-1/2 -translate-x-1/2 w-[90vw] h-[80vh] flex items-center justify-center -mt-16 -z-10">
-    <img src="{{ asset('assets/Carol.jpg') }}" alt="Background Image" class="absolute inset-0 w-full h-full object-cover pointer-events-none">
+    <img src="https://www.themoviedb.org/t/p/original{{ $movie->backdrop }}" alt="Background Image" class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none">
 
     <!-- Soft, Extended, and More Noticeable Fade Effect -->
     <div class="absolute inset-0 pointer-events-none">
@@ -23,21 +23,31 @@
 <!-- Movie Details Section with Overlapping Effect -->
 <div class="container relative -mt-32 z-10">
     <div class="flex flex-col md:flex-row gap-4">
-        <div>
-            <x-movie-card poster="https://image.tmdb.org/t/p/w500/your-image.jpg" />
+        <div class="shadow-lg rounded-lg overflow-hidden">
+            <x-movie-card poster="https://www.themoviedb.org/t/p/w220_and_h330_face{{ $movie->poster }}" alt="Poster" />
         </div>
         <div class="md:w-2/3">
             <div class="flex items-center mb-4">
-                <h1 class="text-4xl font-bold mr-4">Movie Title</h1>
-                <p class="text-gray-300 mr-4">Release Year</p>
-                <p class="text-gray-300 mr-4">Directed by</p>
+                <h1 class="text-4xl font-bold mr-4">{{ $movie->title ?? 'No Title'}}</h1>
+                <p class="text-gray-300 mr-4">{{ $year }}</p>
+                <p class="text-gray-300 mr-4">{{ $movie->director->name ?? 'unknown' }}</p>
             </div>
             <p class="text-gray-300 mb-4">Duration: 2h 30m</p>
-            <p class="text-gray-300 mb-4">Genre: Action, Adventure, Sci-Fi</p>
-            <p class="text-gray-300 mb-4">Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <div class="flex items-center text-gray-300 mb-4">
+                    <span class="font-semibold mr-2">Genre:</span>
+                    <ul class="flex flex-wrap space-x-2">
+                        @foreach($movie->genres as $genre)
+                            <li class="flex items-center">
+                                {{ $genre->name }}
+                                @if (!$loop->last)
+                                    <span class="mx-2">•</span>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            <p class="text-gray-300 mb-4">Description: {{ $movie->description ?? "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}} </p>
         </div>
-
-
     </div>
 </div>
 
@@ -112,30 +122,28 @@
     <h1 class="text-2xl font-bold">Ratings</h1>
 
     <div class="container mx-auto relative mt-4 flex items-center gap-2">
-
         <!-- Stars -->
         <div class="flex gap-1 text-yellow-400">
+            @php
+                $rating = floor($movie->ratings / 2);
+            @endphp
             @for ($i = 0; $i < 5; $i++)
-                <img src="{{ asset('assets/star.png') }}" alt="Star" class="w-10 h-10">
-                @endfor
+                @if ($i < $rating)
+                    <img src="{{ asset('assets/star.png') }}" alt="Star" class="w-10 h-10">
+                @else
+                    <img src="{{ asset('assets/star-gray.png') }}" alt="Gray Star" class="w-10 h-10">
+                @endif
+            @endfor
         </div>
         <!-- Rating Number -->
-        <h1 class="text-2xl font-bold">5.0</h1>
+        <h1 class="text-2xl font-bold">{{ $rating }}</h1>
     </div>
 </div>
-
 
 <div class="mt-20 ">
     <h1 class="text-2xl font-bold mr-4">Reviews</h1>
     <div class="container mx-auto relative mt-4">
-        <x-review-editor />
-        <x-review-card
-            username="prim"
-            review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et"
-            rating="4"
-            likes="125"
-            comments="5"
-            profileImage="{{ asset('storage/profile.jpg') }}" />
+        <x-review-editor :movie="$movie" />
 
         <x-review-card
             username="prim"
@@ -143,7 +151,17 @@
             rating="4"
             likes="125"
             comments="5"
-            profileImage="{{ asset('storage/profile.jpg') }}" />
+            profileImage="{{ asset('storage/profile.jpg') }}" 
+        />
+
+        {{-- <x-review-card
+            username="prim"
+            review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et"
+            rating="4"
+            likes="125"
+            comments="5"
+            profileImage="{{ asset('storage/profile.jpg') }}" 
+        /> --}}
 
     </div>
 </div>

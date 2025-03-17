@@ -19,7 +19,8 @@
 
     <!-- {{-- default css --}}
     <link rel="stylesheet" href="{{ asset('css/var.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}"> -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}"> 
+    -->
 
     {{--
         applies css to a certain blade file without interruptions

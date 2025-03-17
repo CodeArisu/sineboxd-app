@@ -12,13 +12,19 @@
             @endfor
     </div>
 
+    <form action="" method="POST">
+        @csrf
+        <!-- Review Editor -->
+{{-- 
+        <input type="hidden" name='movie_id' value="{{ $movie->id }}">
+        <input type="hidden" name='parent_id' value="{{ $parentComment->id ?? ''}}"> --}}
+        <textarea rows="5" placeholder="Write your review here..."
+        class="w-full p-3 rounded-lg bg-[#222222] text-white focus:outline-none focus:ring-2 focus:ring-yellow-400" name='content' required></textarea>
 
-    <!-- Review Editor -->
-    <textarea rows="5" placeholder="Write your review here..."
-        class="w-full p-3 rounded-lg bg-[#222222] text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"></textarea>
-
-    <!-- Submit Button -->
-    <button class="mt-3 px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg hover:bg-yellow-500 transition">
+        <!-- Submit Button -->
+        <button class="mt-3 px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg hover:bg-yellow-500 transition">
         Submit Review
-    </button>
+        </button>
+    </form>
+    
 </div>

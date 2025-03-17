@@ -78,7 +78,9 @@ class FetchMovieService
             'box_office_id' => $this->revenue,
             'ratings' => $movie['vote_average'],
             'poster' => $movie['poster_path'] ?? 'no poster',
+            'backdrop' => $movie['backdrop_path'] ?? 'no backdrop',
             'category_id' => $this->category,
+            'runtime' => $movie['runtime'] ?? 0,
             'release_year' => $movie['release_date'],
         ]);
     }
