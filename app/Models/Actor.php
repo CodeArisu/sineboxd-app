@@ -14,7 +14,7 @@ class Actor extends Model
 
     protected $fillable = [
         'name',
-        'nationality',
+        'profile',
         'gender_id',
     ];
 

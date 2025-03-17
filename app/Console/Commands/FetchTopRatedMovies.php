@@ -11,7 +11,7 @@ class FetchTopRatedMovies extends FetchFromAPI
      *
      * @var string
      */
-    protected $signature = 'app:fetch-top-rated-movies {--pages=}';
+    protected $signature = 'fetch:top-rated-movies {--pages=}';
 
     /**
      * The console command description.
