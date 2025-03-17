@@ -23,7 +23,7 @@ class FetchCastsService
         // stores to database
         return Actor::firstOrCreate([
             'name' => $actor['name'],
-            'nationality' => $actor['nationality'] ?? 'Unknown',
+            'profile' => $actor['profile_path'] ?? 'no profile',
             'gender_id' => $genderId,
         ]);
     }

@@ -8,7 +8,7 @@
         </div>
         <!-- Navigation Links -->
         <ul class="flex space-x-6 ">
-            <li><a href="#" class="hover:text-yellow-400 font-semibold">Home</a></li>
+            <li><a href="{{ route('landing-page') }}" class="hover:text-yellow-400 font-semibold">Home</a></li>
             <li><a href="#" class="hover:text-yellow-400 font-semibold">Movies</a></li>
             <li><a href="#" class="hover:text-yellow-400 font-semibold">Cinema</a></li>
         </ul>

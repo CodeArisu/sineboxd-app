@@ -31,7 +31,7 @@
 
 
 <body class="bg-[#222222] text-white mx-40  ">
-   
+    @include('layouts.navbar') <!-- Include the navbar -->
         {{--
         -- Where html contents are being applied
         --}}
