@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Movie Detail')
-
 @section('content')
-@include('layouts.navbar') <!-- Include the navbar -->
 
 <div class="relative left-1/2 -translate-x-1/2 w-[90vw] h-[80vh] flex items-center justify-center -mt-16 -z-10">
     <img src="{{ asset('assets/Carol.jpg') }}" alt="Background Image" class="absolute inset-0 w-full h-full object-cover pointer-events-none">
