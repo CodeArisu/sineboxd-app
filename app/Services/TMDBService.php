@@ -64,4 +64,16 @@ class TMDBService
         ]);
         return $response;
     }
+
+    public function fetchLatestMovies() 
+    {
+        $response = Http::get('{$this->baseUrl}movie/now_playing', [
+            'api_key' => $this->apiKey,
+            'language' => 'en_US',
+            'page' => 1
+        ]);
+
+        return $response->json()['results'] ?? [];
+    }
+
 }
