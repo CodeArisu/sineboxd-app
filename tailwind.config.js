@@ -8,6 +8,8 @@ export default {
         './resources/**/*.blade.php',
         './resources/**/*.js',
         './resources/**/*.vue',
+        './node_modules/flyonui/dist/js/*.js',
+        "./node_modules/flyonui/dist/js/carousel.js",
     ],
     theme: {
         extend: {
@@ -16,4 +18,8 @@ export default {
             },
         },
     },
+    plugins: [
+        require("flyonui"),
+        require("flyonui/plugin") // Require only if you want to use FlyonUI JS component
+      ]
 };

@@ -40,6 +40,8 @@
 
 
 
+<script src="//unpkg.com/alpinejs" defer></script>
+<script src="../node_modules/flyonui/flyonui.js"></script>
 </body>
 
 
@@ -49,7 +51,7 @@
 
 @stack('scripts')
 
-<script src="//unpkg.com/alpinejs" defer></script>
+
 
 
 </html>
