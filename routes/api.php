@@ -28,5 +28,4 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // inserts new comments
     // Route::post('/movie/{movie}/comment', [App\Http\Controllers\CommentController::class, 'storeComment'])->name('create-comment');
     // deletes new comment
-    Route::delete('/movie/{movie}/comment/{comments}', [App\Http\Controllers\CommentController::class, 'deleteComment'])->name('remove-comment');
 });

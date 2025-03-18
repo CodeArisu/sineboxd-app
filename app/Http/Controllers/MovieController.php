@@ -207,16 +207,7 @@ class MovieController extends Controller
 
     public function show(Movie $movie)
     {   
-        $year = Carbon::parse($movie->release_year)->year;
-        return view('page.movie', [
-            'movie' => $movie,
-            'comments' => $movie->comments()
-            ->whereNull('parent_id')
-            ->with('replies.user', 'user')
-            ->latest()
-            ->get(),
-            'year' => $year
-        ]);
+
     }
 
     public function edit(Movie $movie)
