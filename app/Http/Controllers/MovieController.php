@@ -19,7 +19,7 @@ class MovieController extends Controller
 {
     public function index()
     {
-        return view('page.movie');
+
     }
 
     public function create()
@@ -206,7 +206,7 @@ class MovieController extends Controller
     }
 
     public function show(Movie $movie)
-    {
+    {   
 
     }
 

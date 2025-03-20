@@ -10,7 +10,7 @@ return new class extends Migration
     {   
         Schema::create('genres', function (Blueprint $table) {
             $table->id();
-            $table->string('genre');
+            $table->string('name');
             $table->timestamps();
         });
 
@@ -62,6 +62,7 @@ return new class extends Migration
             $table->longText('description');
             $table->integer('ratings');
             $table->string('poster');
+            $table->string('backdrop');
 
             $table->foreignId('director_id')
             ->constrained('directors')
@@ -82,7 +83,7 @@ return new class extends Migration
             ->onDelete('cascade');
 
             $table->date('release_year')->nullable();
-
+            $table->integer('runtime');
             $table->timestamps();
         });
 

@@ -21,10 +21,10 @@
 
         <!-- Like & Comment Count -->
         <div class="flex items-center gap-4 mt-3">
-            <div class="flex items-center gap-1">
+            {{-- <div class="flex items-center gap-1">
                 <img src="{{ asset('assets/heart.png') }}" alt="Heart" class="w-5 h-5">
                 <span class="text-gray-300 text-sm">{{ $likes }}</span>
-            </div>
+            </div> --}}
             <div class="flex items-center gap-1">
                 <img src="{{ asset('assets/comment.png') }}" alt="Comment" class="w-5 h-5">
                 <span class="text-gray-300 text-sm">{{ $comments }}</span>
