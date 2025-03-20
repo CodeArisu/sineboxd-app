@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Director extends Model
 {
@@ -13,7 +14,7 @@ class Director extends Model
         'name'
     ];
 
-    public function movie(): BelongsTo {
-        return $this->belongsTo(Movie::class);
+    public function movie(): HasMany {
+        return $this->hasMany(Movie::class);
     }
 }

@@ -19,7 +19,7 @@ class MovieController extends Controller
 {
     public function index()
     {
-        // page for the data lifecycle
+
     }
 
     public function create()
@@ -206,14 +206,8 @@ class MovieController extends Controller
     }
 
     public function show(Movie $movie)
-    {
-        return response()->json(
-            [
-                'status' => 'posted',
-                'movies' => $movie,
-            ],
-            200,
-        );
+    {   
+
     }
 
     public function edit(Movie $movie)

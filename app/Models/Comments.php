@@ -14,8 +14,8 @@ class Comments extends Model
     protected $fillable = [
         'user_id',
         'movie_id',
-        'parent_id',
-        'content'
+        'parent_id', // for replies
+        'content' // contents
     ];
 
     public function user() : BelongsTo

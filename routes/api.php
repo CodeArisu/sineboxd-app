@@ -16,13 +16,16 @@ Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->na
 // it is protected by the sanctum as middleware
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+    // // inserts new movies
+    // Route::post('/movie/create', [App\Http\Controllers\MovieController::class, 'store'])->name('create-movie');
+    // // view inserted movies
+    // Route::get('/movie/{movie}', [App\Http\Controllers\MovieController::class, 'show'])->name('show-movie');
+    // // deletes existing movies
+    // Route::delete('/movie/delete/{movie}', [App\Http\Controllers\MovieController::class, 'destroy'])->name('delete-movie');
+    // // updates movie data
+    // Route::put('/movie/update/{movie}', [App\Http\Controllers\MovieController::class, 'update'])->name('update-movie');
 
-    // inserts new movies
-    Route::post('/movie/create', [App\Http\Controllers\MovieController::class, 'store'])->name('create-movie');
-    // view inserted movies
-    Route::get('/movie/{movie}', [App\Http\Controllers\MovieController::class, 'show'])->name('show-movie');
-    // deletes existing movies
-    Route::delete('/movie/delete/{movie}', [App\Http\Controllers\MovieController::class, 'destroy'])->name('delete-movie');
-    // updates movie data
-    Route::put('/movie/update/{movie}', [App\Http\Controllers\MovieController::class, 'update'])->name('update-movie');
+    // inserts new comments
+    // Route::post('/movie/{movie}/comment', [App\Http\Controllers\CommentController::class, 'storeComment'])->name('create-comment');
+    // deletes new comment
 });

@@ -9,7 +9,7 @@ class FetchUpcomingMovies extends FetchFromAPI
      *
      * @var string
      */
-    protected $signature = 'app:fetch-upcoming-movies {--pages=}';
+    protected $signature = 'fetch:upcoming-movies {--pages=}';
 
     /**
      * The console command description.

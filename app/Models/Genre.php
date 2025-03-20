@@ -11,10 +11,10 @@ class Genre extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'genre'
+        'name'
     ];
 
     public function movie(): BelongsToMany {
-        return $this->belongsToMany(Movie::class);
+        return $this->belongsToMany(Movie::class, 'genre_movie');
     }
 }
