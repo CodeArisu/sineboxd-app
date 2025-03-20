@@ -88,16 +88,13 @@
 <div x-data="{
   currentSlideIndex: 0,
   slides: [
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image1.jpg', title: 'Movie 1' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image2.jpg', title: 'Movie 2' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image3.jpg', title: 'Movie 3' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image4.jpg', title: 'Movie 4' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image5.jpg', title: 'Movie 5' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image6.jpg', title: 'Movie 6' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image7.jpg', title: 'Movie 7' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image8.jpg', title: 'Movie 8' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image9.jpg', title: 'Movie 9' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image10.jpg', title: 'Movie 10' },
+     @foreach ($popular as $movies)
+            { 
+               id: {{ $movies->id }}, 
+               poster: 'https://image.tmdb.org/t/p/w500/{{ $movies->poster }}', 
+               title: '{{ addslashes($movies->title) }}' 
+            },
+     @endforeach
   ],
   previous() {
     this.currentSlideIndex = (this.currentSlideIndex - 1 + this.slides.length) % this.slides.length;
@@ -114,9 +111,11 @@
       <div class="w-1/5 flex-shrink-0 px-2">
         <div class="flex flex-col items-center">
           <!-- Movie Poster -->
-          <div class="w-40 h-[16rem] bg-gray-300 rounded-2xl overflow-hidden">
-            <img :src="slide.poster" alt="Movie Poster" class="w-full h-full object-cover">
-          </div>
+          <a :href="'/movies/' + slide.id">
+            <div class="w-40 h-[16rem] bg-gray-300 rounded-2xl overflow-hidden">
+              <img :src="slide.poster" alt="Movie Poster" class="w-full h-full object-cover">
+            </div>
+          </a>
           <!-- Movie Title -->
           <p class="mt-2 text-white text-center text-lg" x-text="slide.title"></p>
         </div>
@@ -142,16 +141,13 @@
 <div x-data="{
   currentSlideIndex: 0,
   slides: [
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image1.jpg', title: 'Movie 1' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image2.jpg', title: 'Movie 2' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image3.jpg', title: 'Movie 3' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image4.jpg', title: 'Movie 4' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image5.jpg', title: 'Movie 5' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image6.jpg', title: 'Movie 6' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image7.jpg', title: 'Movie 7' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image8.jpg', title: 'Movie 8' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image9.jpg', title: 'Movie 9' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image10.jpg', title: 'Movie 10' },
+    @foreach ($latest as $movies)
+              { 
+               id: {{ $movies->id }}, 
+               poster: 'https://image.tmdb.org/t/p/w500/{{ $movies->poster }}', 
+               title: '{{ addslashes($movies->title) }}' 
+            },
+     @endforeach
   ],
   previous() {
     this.currentSlideIndex = (this.currentSlideIndex - 1 + this.slides.length) % this.slides.length;
@@ -168,9 +164,11 @@
       <div class="w-1/5 flex-shrink-0 px-2">
         <div class="flex flex-col items-center">
           <!-- Movie Poster -->
-          <div class="w-40 h-[16rem] bg-gray-300 rounded-2xl overflow-hidden">
-            <img :src="slide.poster" alt="Movie Poster" class="w-full h-full object-cover">
-          </div>
+            <a :href="'/movies/' + slide.id">
+              <div class="w-40 h-[16rem] bg-gray-300 rounded-2xl overflow-hidden">
+                <img :src="slide.poster" alt="Movie Poster" class="w-full h-full object-cover">
+              </div>
+            </a>
           <!-- Movie Title -->
           <p class="mt-2 text-white text-center text-lg" x-text="slide.title"></p>
         </div>
@@ -195,16 +193,13 @@
 <div x-data="{
   currentSlideIndex: 0,
   slides: [
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image1.jpg', title: 'Movie 1' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image2.jpg', title: 'Movie 2' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image3.jpg', title: 'Movie 3' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image4.jpg', title: 'Movie 4' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image5.jpg', title: 'Movie 5' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image6.jpg', title: 'Movie 6' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image7.jpg', title: 'Movie 7' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image8.jpg', title: 'Movie 8' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image9.jpg', title: 'Movie 9' },
-    { poster: 'https://image.tmdb.org/t/p/w500/your-image10.jpg', title: 'Movie 10' },
+     @foreach ($upcoming as $movies)
+              { 
+               id: {{ $movies->id }}, 
+               poster: 'https://image.tmdb.org/t/p/w500/{{ $movies->poster }}', 
+               title: '{{ addslashes($movies->title) }}' 
+              },
+     @endforeach
   ],
   previous() {
     this.currentSlideIndex = (this.currentSlideIndex - 1 + this.slides.length) % this.slides.length;
@@ -221,9 +216,11 @@
       <div class="w-1/5 flex-shrink-0 px-2">
         <div class="flex flex-col items-center">
           <!-- Movie Poster -->
-          <div class="w-40 h-[16rem] bg-gray-300 rounded-2xl overflow-hidden">
-            <img :src="slide.poster" alt="Movie Poster" class="w-full h-full object-cover">
-          </div>
+          <a :href="'/movies/' + slide.id">
+            <div class="w-40 h-[16rem] bg-gray-300 rounded-2xl overflow-hidden">
+              <img :src="slide.poster" alt="Movie Poster" class="w-full h-full object-cover">
+            </div>
+          </a>
           <!-- Movie Title -->
           <p class="mt-2 text-white text-center text-lg" x-text="slide.title"></p>
         </div>
@@ -239,18 +236,4 @@
     <img src="assets/right-arrow.png" alt="Next" class="w-6 h-6">
   </button>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @endsection

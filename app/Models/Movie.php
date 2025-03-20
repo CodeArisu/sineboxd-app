@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
 class Movie extends Model
 {
@@ -20,7 +21,9 @@ class Movie extends Model
         'box_office_id',
         'ratings',
         'poster',
+        'backdrop',
         'category_id',
+        'runtime',
         'release_year',
     ];
 
@@ -29,12 +32,11 @@ class Movie extends Model
         'updated_at'
     ];
 
-    public function genre() : BelongsToMany {
-        return $this->belongsToMany(Genre::class)
-        ->withTimestamps();
+    public function genres() : BelongsToMany {
+        return $this->belongsToMany(Genre::class, 'genre_movie');
     }
-    public function director() : HasOneOrMany {
-        return $this->hasMany(Director::class);
+    public function director() : BelongsTo {
+        return $this->belongsTo(Director::class);
     }
     public function budget() : HasOne {
         return $this->hasOne(Budget::class, 'id');
@@ -48,5 +50,9 @@ class Movie extends Model
     public function category() : BelongsToMany {
         return $this->belongsToMany(Category::class)
         ->withTimestamps();
+    }
+    public function comments() : HasMany
+    {
+        return $this->hasMany(Comments::class);
     }
 }

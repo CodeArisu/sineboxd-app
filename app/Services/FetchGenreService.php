@@ -18,7 +18,7 @@ class FetchGenreService
     protected function storeGenre($genreName) {
         // inserts the data into genre
         return Genre::firstOrCreate([
-            'genre' => trim($genreName)
+            'name' => trim($genreName)
         ])->id;
     }
 
@@ -39,6 +39,6 @@ class FetchGenreService
         })->toArray();
 
         // syncs the genre ids to the movie
-        $newMovie->genre()->sync($genreIds);
+        $newMovie->genres()->sync($genreIds);
     }
 }

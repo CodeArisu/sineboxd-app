@@ -94,8 +94,10 @@ abstract class FetchFromAPI extends Command
         $movieData = [
             'movieObj' => $movie,
             'director' => $movieCredit['crew'] ?? [],
-            'budget' => $movieDetail['budget'] ?? null,
-            'revenue' => $movieDetail['revenue'] ?? null,
+            'detail' => $movieDetail ?? [],
+            // 'detail' => $movieDetail['budget'] ?? null,
+            // 'revenue' => $movieDetail['revenue'] ?? null,
+            // 'runtime' => $movieDetail['runtime'] ?? 0,
             'category' => $this->category, // endpoint category
         ];
 
@@ -114,7 +116,6 @@ abstract class FetchFromAPI extends Command
         if ($this->failedResponse($movieCreditResponse, 'movie credits')) {
             return [null, null];
         }
-
         // extracts movie details
         $movieDetailResponse = $this->tmdbService->fetchMoviesByDetails($movieId, false);
         if ($this->failedResponse($movieCreditResponse, 'movie details')) {
