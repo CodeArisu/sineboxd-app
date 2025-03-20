@@ -14,9 +14,10 @@ class landingController extends Controller
     {   
         $popular = Movie::where('category_id', 1)->get();
         $latest = Movie::where('category_id', 2)->get();
-        $upcoming = Movie::where('category_id', 3)->get();
+        $topRated = Movie::where('category_id', 3)->get();
+        $upcoming = Movie::where('category_id', 4)->get();
 
-        return view('index', compact('popular', 'latest', 'upcoming'));
+        return view('index', compact('popular', 'latest', 'upcoming', 'topRated'));
     }
 
     /**

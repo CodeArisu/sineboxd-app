@@ -14,7 +14,7 @@ class CommentController extends Controller
         return Validator::make($request->all(), [
             'movie_id' => 'required|int|exists:movies,id',
             'content' => 'required|max:255|string',
-            'parent_id' => 'nullable|int'
+            'parent_id' => 'nullable|int|exists:comments,id'
         ]);
     }
 
@@ -33,7 +33,7 @@ class CommentController extends Controller
 
     public function storeComment(Request $request, Movie $movie) 
     {
-        $this->validateComment($request);
+        $validated = $this->validateComment($request);
 
         Comments::create([
             'user_id' => 2,
