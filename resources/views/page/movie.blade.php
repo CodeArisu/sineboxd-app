@@ -100,12 +100,6 @@
         </div>
     </div>
 
-
-
-
-
-
-
 </div>
 
 <div class="mt-20">
@@ -147,10 +141,5 @@
 
     </div>
 </div>
-
-
-
-
-
 
 @endsection

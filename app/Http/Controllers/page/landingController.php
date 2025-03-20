@@ -12,10 +12,11 @@ class landingController extends Controller
 {
     public function index()
     {   
-        $movies = Movie::all();
-        $genres = Genre::all();
+        $popular = Movie::where('category_id', 1)->get();
+        $latest = Movie::where('category_id', 2)->get();
+        $upcoming = Movie::where('category_id', 3)->get();
 
-        return view('index', compact('movies', 'genres'));
+        return view('index', compact('popular', 'latest', 'upcoming'));
     }
 
     /**
