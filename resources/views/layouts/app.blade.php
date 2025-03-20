@@ -15,11 +15,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     {{-- ... --}}
-    @vite('resources/js/app.js')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- {{-- default css --}}
     <link rel="stylesheet" href="{{ asset('css/var.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}"> -->
+
+
 
     {{--
         applies css to a certain blade file without interruptions
@@ -29,19 +31,22 @@
 
 </head>
 
-
-<body class="bg-[#222222] text-white mx-40  ">
+<body class="bg-[#222222] text-white mx-40 mt-4">
+    {{--
+        -- Where the navbar is being included
+        --}}
     @include('layouts.navbar') <!-- Include the navbar -->
-        {{--
+
+    {{--
         -- Where html contents are being applied
         --}}
 
-        @yield('content')
+    @yield('content')
 
 
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<script src="//unpkg.com/alpinejs" defer></script>
-<script src="../node_modules/flyonui/flyonui.js"></script>
 </body>
 
 
@@ -50,6 +55,7 @@
     --}}
 
 @stack('scripts')
+
 
 
 
