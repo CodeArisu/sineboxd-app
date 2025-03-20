@@ -109,7 +109,7 @@
             </div>
         </div>
     </div>
-
+    
     <div class="mt-20">
         <h1 class="text-2xl font-bold">Ratings</h1>
 
@@ -125,6 +125,17 @@
                     @else
                         <img src="{{ asset('assets/star-gray.png') }}" alt="Gray Star" class="w-10 h-10">
                     @endif
+</div>
+
+<div class="mt-20">
+    <h1 class="text-2xl font-bold">Ratings</h1>
+
+    <div class="container mx-auto relative mt-4 flex items-center gap-2">
+
+        <!-- Stars -->
+        <div class="flex gap-1 text-yellow-400">
+            @for ($i = 0; $i < 5; $i++)
+                <img src="{{ asset('assets/star.png') }}" alt="Star" class="w-10 h-10">
                 @endfor
             </div>
             <!-- Rating Number -->
@@ -237,5 +248,6 @@
 
         </div>
     </div>
+</div>
 
 @endsection
